@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.bluer.moment.mapper.MomentDiscussMapper">
+
+    <resultMap type="top.bluer.moment.entity.MomentDiscuss" id="MomentDiscussMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="discussData" column="discuss_data" jdbcType="VARCHAR"/>
+        <result property="levelType" column="level_type" jdbcType="INTEGER"/>
+        <result property="levelId" column="level_id" jdbcType="INTEGER"/>
+        <result property="dynamicId" column="dynamic_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="author" column="author" jdbcType="VARCHAR"/>
+        <result property="creatTime" column="creat_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="top.bluer.moment.entity.vo.MomentDiscussAndUserVo" extends="MomentDiscussMap"
+               id="MomentDiscussAndUserMap">
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="userAvatar" column="user_avatar" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MomentDiscussMap">
+        select id,
+               discuss_data,
+               level_type,
+               level_id,
+               dynamic_id,
+               user_id,
+               author,
+               creat_time,
+               status
+        from moment_discuss
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MomentDiscussMap">
+        select
+        id, discuss_data, level_type, level_id, dynamic_id, user_id, author, creat_time, status
+        from moment_discuss
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="discussData != null and discussData != ''">
+                and discuss_data = #{discussData}
+            </if>
+            <if test="levelType != null">
+                and level_type = #{levelType}
+            </if>
+            <if test="levelId != null">
+                and level_id = #{levelId}
+            </if>
+            <if test="dynamicId != null">
+                and dynamic_id = #{dynamicId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="author != null and author != ''">
+                and author = #{author}
+            </if>
+            <if test="creatTime != null">
+                and creat_time = #{creatTime}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from moment_discuss
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="discussData != null and discussData != ''">
+                and discuss_data = #{discussData}
+            </if>
+            <if test="levelType != null">
+                and level_type = #{levelType}
+            </if>
+            <if test="levelId != null">
+                and level_id = #{levelId}
+            </if>
+            <if test="dynamicId != null">
+                and dynamic_id = #{dynamicId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="author != null and author != ''">
+                and author = #{author}
+            </if>
+            <if test="creatTime != null">
+                and creat_time = #{creatTime}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+    <!--根据动态id获取所有留言-->
+    <select id="queryByDynamicId" resultMap="MomentDiscussAndUserMap">
+        select md.*, mu.user_name, mu.user_avatar
+        from moment_discuss md
+                 left join moment_user mu on md.user_id = mu.user_id
+        where md.dynamic_id = #{dynamicId} and md.status = 'M' and mu.user_status = 'E' order by md.creat_time desc
+    </select>
+
+    <!--发布留言-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_discuss(discuss_data, level_type, level_id, dynamic_id, user_id, author, creat_time, status)
+        values (#{discussData}, #{levelType}, #{levelId}, #{dynamicId}, #{userId}, #{author}, #{creatTime}, #{status})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_discuss(discuss_data, level_type, level_id, dynamic_id, user_id, author, creat_time, status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.discussData}, #{entity.levelType}, #{entity.levelId}, #{entity.dynamicId}, #{entity.userId},
+            #{entity.author}, #{entity.creatTime}, #{entity.status})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_discuss(discuss_data, level_type, level_id, dynamic_id, user_id, author, creat_time, status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.discussData}, #{entity.levelType}, #{entity.levelId}, #{entity.dynamicId}, #{entity.userId},
+            #{entity.author}, #{entity.creatTime}, #{entity.status})
+        </foreach>
+        on duplicate key update
+        discuss_data = values(discuss_data),
+        level_type = values(level_type),
+        level_id = values(level_id),
+        dynamic_id = values(dynamic_id),
+        user_id = values(user_id),
+        author = values(author),
+        creat_time = values(creat_time),
+        status = values(status)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update moment_discuss
+        <set>
+            <if test="discussData != null and discussData != ''">
+                discuss_data = #{discussData},
+            </if>
+            <if test="levelType != null">
+                level_type = #{levelType},
+            </if>
+            <if test="levelId != null">
+                level_id = #{levelId},
+            </if>
+            <if test="dynamicId != null">
+                dynamic_id = #{dynamicId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="author != null and author != ''">
+                author = #{author},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from moment_discuss
+        where id = #{id}
+    </delete>
+
+</mapper>
+

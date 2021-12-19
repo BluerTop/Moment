@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.bluer.moment.mapper.MomentSmsMapper">
+
+    <resultMap type="top.bluer.moment.entity.MomentSms" id="MomentSmsMap">
+        <result property="aliId" column="ali_id" jdbcType="INTEGER"/>
+        <result property="accessKeyId" column="access_key_id" jdbcType="VARCHAR"/>
+        <result property="accessKeySecret" column="access_key_secret" jdbcType="VARCHAR"/>
+        <result property="signName" column="sign_name" jdbcType="VARCHAR"/>
+        <result property="templateCode" column="template_code" jdbcType="VARCHAR"/>
+        <result property="templateParam" column="template_param" jdbcType="VARCHAR"/>
+        <result property="variableName" column="variable_name" jdbcType="VARCHAR"/>
+        <result property="endpoint" column="endpoint" jdbcType="VARCHAR"/>
+        <result property="describes" column="describes" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--通过describe查询单条数据-->
+    <select id="queryByDescribe" resultMap="MomentSmsMap">
+        select *
+        from moment_sms
+        where describes = #{describes}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MomentSmsMap">
+        select *
+        from moment_sms
+        where ali_id = #{aliId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MomentSmsMap">
+        select *
+        from moment_sms
+        <where>
+            <if test="aliId != null">
+                and ali_id = #{aliId}
+            </if>
+            <if test="accessKeyId != null and accessKeyId != ''">
+                and access_key_id = #{accessKeyId}
+            </if>
+            <if test="accessKeySecret != null and accessKeySecret != ''">
+                and access_key_secret = #{accessKeySecret}
+            </if>
+            <if test="signName != null and signName != ''">
+                and sign_name = #{signName}
+            </if>
+            <if test="templateCode != null and templateCode != ''">
+                and template_code = #{templateCode}
+            </if>
+            <if test="templateParam != null and templateParam != ''">
+                and template_param = #{templateParam}
+            </if>
+            <if test="endpoint != null and endpoint != ''">
+                and endpoint = #{endpoint}
+            </if>
+            <if test="describes != null and describes != ''">
+                and describes = #{describes}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from moment_sms
+        <where>
+            <if test="aliId != null">
+                and ali_id = #{aliId}
+            </if>
+            <if test="accessKeyId != null and accessKeyId != ''">
+                and access_key_id = #{accessKeyId}
+            </if>
+            <if test="accessKeySecret != null and accessKeySecret != ''">
+                and access_key_secret = #{accessKeySecret}
+            </if>
+            <if test="signName != null and signName != ''">
+                and sign_name = #{signName}
+            </if>
+            <if test="templateCode != null and templateCode != ''">
+                and template_code = #{templateCode}
+            </if>
+            <if test="templateParam != null and templateParam != ''">
+                and template_param = #{templateParam}
+            </if>
+            <if test="endpoint != null and endpoint != ''">
+                and endpoint = #{endpoint}
+            </if>
+            <if test="describes != null and describes != ''">
+                and describes = #{describes}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="aliId" useGeneratedKeys="true">
+        insert into moment_sms(access_key_id, access_key_secret, sign_name, template_code, template_param, endpoint,
+                               describes)
+        values (#{accessKeyId}, #{accessKeySecret}, #{signName}, #{templateCode}, #{templateParam}, #{endpoint},
+                #{describes})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="aliId" useGeneratedKeys="true">
+        insert into moment_sms(access_key_id, access_key_secret, sign_name, template_code, template_param, endpoint,
+        describes)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.accessKeyId}, #{entity.accessKeySecret}, #{entity.signName}, #{entity.templateCode},
+            #{entity.templateParam}, #{entity.endpoint}, #{entity.describes})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="aliId" useGeneratedKeys="true">
+        insert into moment_sms(access_key_id, access_key_secret, sign_name, template_code, template_param, endpoint,
+        describes)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.accessKeyId}, #{entity.accessKeySecret}, #{entity.signName}, #{entity.templateCode},
+            #{entity.templateParam}, #{entity.endpoint}, #{entity.describes})
+        </foreach>
+        on duplicate key update
+        access_key_id = values(access_key_id),
+        access_key_secret = values(access_key_secret),
+        sign_name = values(sign_name),
+        template_code = values(template_code),
+        template_param = values(template_param),
+        endpoint = values(endpoint),
+        describes = values(describes)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update moment_sms
+        <set>
+            <if test="accessKeyId != null and accessKeyId != ''">
+                access_key_id = #{accessKeyId},
+            </if>
+            <if test="accessKeySecret != null and accessKeySecret != ''">
+                access_key_secret = #{accessKeySecret},
+            </if>
+            <if test="signName != null and signName != ''">
+                sign_name = #{signName},
+            </if>
+            <if test="templateCode != null and templateCode != ''">
+                template_code = #{templateCode},
+            </if>
+            <if test="templateParam != null and templateParam != ''">
+                template_param = #{templateParam},
+            </if>
+            <if test="endpoint != null and endpoint != ''">
+                endpoint = #{endpoint},
+            </if>
+            <if test="describes != null and describes != ''">
+                describes = #{describes},
+            </if>
+        </set>
+        where ali_id = #{aliId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from moment_sms
+        where ali_id = #{aliId}
+    </delete>
+
+</mapper>
+

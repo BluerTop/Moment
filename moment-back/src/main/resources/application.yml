@@ -1,0 +1,6 @@
+server:
+  port: 8812
+
+spring:
+  profiles:
+    active: dev

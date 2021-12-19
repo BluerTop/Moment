@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.bluer.moment.mapper.MomentAccountMapper">
+
+    <resultMap type="top.bluer.moment.entity.MomentAccount" id="MomentAccountMap">
+        <result property="accountId" column="account_id" jdbcType="INTEGER"/>
+        <result property="accountType" column="account_type" jdbcType="VARCHAR"/>
+        <result property="accountPhone" column="account_phone" jdbcType="VARCHAR"/>
+        <result property="accountMail" column="account_mail" jdbcType="VARCHAR"/>
+        <result property="accountPassword" column="account_password" jdbcType="VARCHAR"/>
+        <result property="accountStatus" column="account_status" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--通过用户条件查询单条数据-->
+    <select id="queryByCondition" resultMap="MomentAccountMap">
+        select *
+        from moment_account
+        <where>
+            account_password is not null
+            <if test="accountId != null">
+                and account_id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType != ''">
+                and account_type = #{accountType}
+            </if>
+            <if test="accountPhone != null and accountPhone != ''">
+                and account_phone = #{accountPhone}
+            </if>
+            <if test="accountMail != null and accountMail != ''">
+                and account_mail = #{accountMail}
+            </if>
+            <if test="accountStatus != null and accountStatus != ''">
+                and account_status = #{accountStatus}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MomentAccountMap">
+        select *
+        from moment_account
+        where account_id = #{accountId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MomentAccountMap">
+        select
+        account_id, account_type, account_phone, account_mail, account_password, user_id
+        from moment_account
+        <where>
+            <if test="accountId != null">
+                and account_id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType != ''">
+                and account_type = #{accountType}
+            </if>
+            <if test="accountPhone != null and accountPhone != ''">
+                and account_phone = #{accountPhone}
+            </if>
+            <if test="accountMail != null and accountMail != ''">
+                and account_mail = #{accountMail}
+            </if>
+            <if test="accountPassword != null and accountPassword != ''">
+                and account_password = #{accountPassword}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from moment_account
+        <where>
+            <if test="accountId != null">
+                and account_id = #{accountId}
+            </if>
+            <if test="accountType != null and accountType != ''">
+                and account_type = #{accountType}
+            </if>
+            <if test="accountPhone != null and accountPhone != ''">
+                and account_phone = #{accountPhone}
+            </if>
+            <if test="accountMail != null and accountMail != ''">
+                and account_mail = #{accountMail}
+            </if>
+            <if test="accountPassword != null and accountPassword != ''">
+                and account_password = #{accountPassword}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="accountId" useGeneratedKeys="true">
+        insert into moment_account(account_type, account_phone, account_mail, account_password, user_id, account_status)
+        values (#{accountType}, #{accountPhone}, #{accountMail}, #{accountPassword}, #{userId}, #{accountStatus})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="accountId" useGeneratedKeys="true">
+        insert into moment_account(account_type, account_phone, account_mail, account_password, user_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.accountType}, #{entity.accountPhone}, #{entity.accountMail}, #{entity.accountPassword},
+            #{entity.userId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="accountId" useGeneratedKeys="true">
+        insert into moment_account(account_type, account_phone, account_mail, account_password, user_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.accountType}, #{entity.accountPhone}, #{entity.accountMail}, #{entity.accountPassword},
+            #{entity.userId})
+        </foreach>
+        on duplicate key update
+        account_type = values(account_type),
+        account_phone = values(account_phone),
+        account_mail = values(account_mail),
+        account_password = values(account_password),
+        user_id = values(user_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update moment_account
+        <set>
+            <if test="accountType != null and accountType != ''">
+                account_type = #{accountType},
+            </if>
+            <if test="accountPhone != null and accountPhone != ''">
+                account_phone = #{accountPhone},
+            </if>
+            <if test="accountMail != null and accountMail != ''">
+                account_mail = #{accountMail},
+            </if>
+            <if test="accountPassword != null and accountPassword != ''">
+                account_password = #{accountPassword},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+        </set>
+        where account_id = #{accountId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from moment_account
+        where account_id = #{accountId}
+    </delete>
+
+</mapper>
+

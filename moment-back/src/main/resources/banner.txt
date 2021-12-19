@@ -1,0 +1,16 @@
+${AnsiColor.BRIGHT_YELLOW}    玛卡巴卡保佑
+${AnsiColor.BRIGHT_YELLOW}      永无BUG
+${AnsiColor.BRIGHT_YELLOW}      永不修改
+${AnsiColor.BRIGHT_RED}
+      /¯¯¯¯\
+    o-|[][]|-o
+      |_--_|
+   /¯¯¯¯¯¯¯¯¯¯\
+   |||  «»  |||
+   |||  {}  |||
+  (o)|  []  |(o)
+     |  ||  |
+     |__||__|
+     |__||__|
+${AnsiColor.BRIGHT_YELLOW} Spring Boot 版本：${spring-boot.version}
+${AnsiColor.BRIGHT_YELLOW} 欢迎来到片刻...

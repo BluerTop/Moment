@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.bluer.moment.mapper.MomentOssMapper">
+
+    <resultMap type="top.bluer.moment.entity.MomentOss" id="MomentOssMap">
+        <result property="ossId" column="oss_id" jdbcType="INTEGER"/>
+        <result property="accessKeyId" column="access_key_id" jdbcType="VARCHAR"/>
+        <result property="accessKeySecret" column="access_key_secret" jdbcType="VARCHAR"/>
+        <result property="endpoint" column="endpoint" jdbcType="VARCHAR"/>
+        <result property="bucketName" column="bucket_name" jdbcType="VARCHAR"/>
+        <result property="urlKey" column="url_key" jdbcType="VARCHAR"/>
+        <result property="returnPrefix" column="return_prefix" jdbcType="VARCHAR"/>
+        <result property="describes" column="describes" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryByDescribe" resultMap="MomentOssMap">
+        select *
+        from moment_oss
+        where describes = #{describes}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MomentOssMap">
+        select
+          oss_id, access_key_id, access_key_secret, endpoint, bucket_name, url_key, return_prefix, describe
+        from moment_oss
+        where oss_id = #{ossId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MomentOssMap">
+        select
+          oss_id, access_key_id, access_key_secret, endpoint, bucket_name, url_key, return_prefix, describe
+        from moment_oss
+        <where>
+            <if test="ossId != null">
+                and oss_id = #{ossId}
+            </if>
+            <if test="accessKeyId != null and accessKeyId != ''">
+                and access_key_id = #{accessKeyId}
+            </if>
+            <if test="accessKeySecret != null and accessKeySecret != ''">
+                and access_key_secret = #{accessKeySecret}
+            </if>
+            <if test="endpoint != null and endpoint != ''">
+                and endpoint = #{endpoint}
+            </if>
+            <if test="bucketName != null and bucketName != ''">
+                and bucket_name = #{bucketName}
+            </if>
+            <if test="urlKey != null and urlKey != ''">
+                and url_key = #{urlKey}
+            </if>
+            <if test="returnPrefix != null and returnPrefix != ''">
+                and return_prefix = #{returnPrefix}
+            </if>
+            <if test="describe != null and describe != ''">
+                and describe = #{describe}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from moment_oss
+        <where>
+            <if test="ossId != null">
+                and oss_id = #{ossId}
+            </if>
+            <if test="accessKeyId != null and accessKeyId != ''">
+                and access_key_id = #{accessKeyId}
+            </if>
+            <if test="accessKeySecret != null and accessKeySecret != ''">
+                and access_key_secret = #{accessKeySecret}
+            </if>
+            <if test="endpoint != null and endpoint != ''">
+                and endpoint = #{endpoint}
+            </if>
+            <if test="bucketName != null and bucketName != ''">
+                and bucket_name = #{bucketName}
+            </if>
+            <if test="urlKey != null and urlKey != ''">
+                and url_key = #{urlKey}
+            </if>
+            <if test="returnPrefix != null and returnPrefix != ''">
+                and return_prefix = #{returnPrefix}
+            </if>
+            <if test="describe != null and describe != ''">
+                and describe = #{describe}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="ossId" useGeneratedKeys="true">
+        insert into moment_oss(access_key_id, access_key_secret, endpoint, bucket_name, url_key, return_prefix, describes)
+        values (#{accessKeyId}, #{accessKeySecret}, #{endpoint}, #{bucketName}, #{urlKey}, #{returnPrefix}, #{describe})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="ossId" useGeneratedKeys="true">
+        insert into moment_oss(access_key_id, access_key_secret, endpoint, bucket_name, url_key, return_prefix, describes)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.accessKeyId}, #{entity.accessKeySecret}, #{entity.endpoint}, #{entity.bucketName}, #{entity.urlKey}, #{entity.returnPrefix}, #{entity.describe})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="ossId" useGeneratedKeys="true">
+        insert into moment_oss(access_key_id, access_key_secret, endpoint, bucket_name, url_key, return_prefix, describes)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.accessKeyId}, #{entity.accessKeySecret}, #{entity.endpoint}, #{entity.bucketName}, #{entity.urlKey}, #{entity.returnPrefix}, #{entity.describe})
+        </foreach>
+        on duplicate key update
+        access_key_id = values(access_key_id),
+        access_key_secret = values(access_key_secret),
+        endpoint = values(endpoint),
+        bucket_name = values(bucket_name),
+        url_key = values(url_key),
+        return_prefix = values(return_prefix),
+        describes = values(describes)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update moment_oss
+        <set>
+            <if test="accessKeyId != null and accessKeyId != ''">
+                access_key_id = #{accessKeyId},
+            </if>
+            <if test="accessKeySecret != null and accessKeySecret != ''">
+                access_key_secret = #{accessKeySecret},
+            </if>
+            <if test="endpoint != null and endpoint != ''">
+                endpoint = #{endpoint},
+            </if>
+            <if test="bucketName != null and bucketName != ''">
+                bucket_name = #{bucketName},
+            </if>
+            <if test="urlKey != null and urlKey != ''">
+                url_key = #{urlKey},
+            </if>
+            <if test="returnPrefix != null and returnPrefix != ''">
+                return_prefix = #{returnPrefix},
+            </if>
+            <if test="describe != null and describe != ''">
+                describe = #{describe},
+            </if>
+        </set>
+        where oss_id = #{ossId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from moment_oss where oss_id = #{ossId}
+    </delete>
+
+</mapper>
+

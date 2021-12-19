@@ -1,0 +1,86 @@
+server:
+  port: 8812
+  ssl:
+    key-store: classpath:5724590_www.bluer.top.pfx
+    key-store-password: ENC(VbWZ0JKLCR6wWqUpXMU4iApvIwTC5UIk)
+
+# 系统配置
+moment:
+  unsplash: ENC(b1zuQww6F7MU8dmOIMruMGXmSEqIlxwPxVSRzF2FbkDVlzDLMcTyf7yNY1yqQub1hyN/9Sx35pwbrDiMCk90dA==)
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+  application:
+    name: moment-back
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: ENC(HjY+iJKl91AYyIAtEyD+D2O6WG+mtVScCPhYHCuP36o51YeDNaVN1vLCZ2T7BuHPynh4UrQr+V0vEppeF7tFwFrD0yF30TcCnLVN/knd6Zg9adgpgHkQDt03ytJR/xlgN+5P05K8B6/37UMWpPluKWLCifrsf5Gv)
+    username: ENC(pCVrwCGBmDQJbkZS5KX8Rg==)
+    password: ENC(M3EbluTBhm2rEYr5AhRoDDpB0nKh2u3/)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      initial-size: 10
+      max-active: 50
+      min-idle: 10
+      max-wait: 99999
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      validation-query: SELECT 1 FROM DUAL
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      filters: stat,wall
+  redis:
+    host: ENC(7r8IR0z5pSFNQx3Bzc45hHSCYq7HLOPz)
+    port: 6379
+    password: ENC(HuKrDwxGNzbznuaLrnEjDLVP6ssfPxJu)
+    database: 0
+    jedis:
+      pool:
+        max-active: 50
+        max-idle: 20
+        max-wait: 99999
+        min-idle: 5
+    timeout: 5000
+
+# Sa-Token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: moment-token
+  # token有效期，单位s 默认30天, -1代表永不过期
+  timeout: -1
+  # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
+  activity-timeout: -1
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: false
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # token风格
+  token-style: random-128
+  # 是否输出操作日志
+  is-log: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level- %msg%n"
+  file:
+    name: logs/moment-logging.log
+
+# MyBatis配置
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: top.bluer.moment.entity
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath*:mapper/*.xml
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: false
+  supportMethodsArguments: true
+  params: count=countSql
+  # 默认false,当为true时，自动检验适合的数据库
+  auto-dialect: true

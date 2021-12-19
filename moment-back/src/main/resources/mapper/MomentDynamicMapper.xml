@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.bluer.moment.mapper.MomentDynamicMapper">
+
+    <resultMap type="top.bluer.moment.entity.MomentDynamic" id="MomentDynamicMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="textData" column="text_data" jdbcType="VARCHAR"/>
+        <result property="pictureData" column="picture_data" jdbcType="VARCHAR"/>
+        <result property="videoData" column="video_data" jdbcType="VARCHAR"/>
+        <result property="label" column="label" jdbcType="VARCHAR"/>
+        <result property="authority" column="authority" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="creatTime" column="creat_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="top.bluer.moment.entity.vo.MomentDynamicAndUserVo" extends="MomentDynamicMap" id="MomentDynamicAndUserMap">
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="userAvatar" column="user_avatar" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--根据id获取单条动态信息-->
+    <select id="queryById" resultMap="MomentDynamicAndUserMap">
+        select md.*,mu.user_name,mu.user_avatar
+        from moment_dynamic md left join moment_user mu on md.user_id = mu.user_id and mu.user_status = 'E'
+        where id = #{id}
+    </select>
+
+    <!--条件分页查询-->
+    <select id="queryAllByLimit" resultMap="MomentDynamicAndUserMap">
+        select md.*,mu.user_name,mu.user_avatar
+        from moment_dynamic md left join moment_user mu on md.user_id = mu.user_id and mu.user_status = 'E'
+        <where>
+            <if test="item.id != null">
+                and md.id = #{item.id}
+            </if>
+            <if test="item.type != null and item.type != ''">
+                and md.type = #{item.type}
+            </if>
+            <if test="item.textData != null and item.textData != ''">
+                and md.text_data = #{item.textData}
+            </if>
+            <if test="item.pictureData != null and item.pictureData != ''">
+                and md.picture_data = #{item.pictureData}
+            </if>
+            <if test="item.videoData != null and item.videoData != ''">
+                and md.video_data = #{item.videoData}
+            </if>
+            <if test="item.label != null and item.label != ''">
+                and md.label = #{item.label}
+            </if>
+            <if test="item.authority != null and item.authority != ''">
+                and md.authority = #{item.authority}
+            </if>
+            <if test="item.userId != null">
+                and md.user_id = #{item.userId}
+            </if>
+            <if test="item.creatTime != null">
+                and md.creat_time = #{item.creatTime}
+            </if>
+            <if test="item.status != null and item.status != ''">
+                and md.status = #{item.status}
+            </if>
+        </where>
+        order by md.creat_time desc
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from moment_dynamic
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="textData != null and textData != ''">
+                and text_data = #{textData}
+            </if>
+            <if test="pictureData != null and pictureData != ''">
+                and picture_data = #{pictureData}
+            </if>
+            <if test="videoData != null and videoData != ''">
+                and video_data = #{videoData}
+            </if>
+            <if test="label != null and label != ''">
+                and label = #{label}
+            </if>
+            <if test="authority != null and authority != ''">
+                and authority = #{authority}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="creatTime != null">
+                and creat_time = #{creatTime}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+    <select id="queryB" resultMap="MomentDynamicMap">
+        select * from moment_dynamic where id > #{id}
+    </select>
+
+    <!--发布动态-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_dynamic(type, text_data, picture_data, video_data, label, authority, user_id, creat_time,
+                                   status)
+        values (#{type}, #{textData}, #{pictureData}, #{videoData}, #{label}, #{authority}, #{userId}, #{creatTime},
+                #{status})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_dynamic(type, text_data, picture_data, video_data, label, authority, user_id, creat_time,
+        status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.type}, #{entity.textData}, #{entity.pictureData}, #{entity.videoData}, #{entity.label},
+            #{entity.authority}, #{entity.userId}, #{entity.creatTime}, #{entity.status})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_dynamic(type, text_data, picture_data, video_data, label, authority, user_id, creat_time,
+        status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.type}, #{entity.textData}, #{entity.pictureData}, #{entity.videoData}, #{entity.label},
+            #{entity.authority}, #{entity.userId}, #{entity.creatTime}, #{entity.status})
+        </foreach>
+        on duplicate key update
+        type = values(type),
+        text_data = values(text_data),
+        picture_data = values(picture_data),
+        video_data = values(video_data),
+        label = values(label),
+        authority = values(authority),
+        user_id = values(user_id),
+        creat_time = values(creat_time),
+        status = values(status)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update moment_dynamic
+        <set>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+            <if test="textData != null and textData != ''">
+                text_data = #{textData},
+            </if>
+            <if test="pictureData != null and pictureData != ''">
+                picture_data = #{pictureData},
+            </if>
+            <if test="videoData != null and videoData != ''">
+                video_data = #{videoData},
+            </if>
+            <if test="label != null and label != ''">
+                label = #{label},
+            </if>
+            <if test="authority != null and authority != ''">
+                authority = #{authority},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--删除动态/恢复动态-->
+    <delete id="delOrRec">
+        update moment_dynamic
+        set status = #{status}
+        where id = #{id}
+    </delete>
+
+</mapper>
+
