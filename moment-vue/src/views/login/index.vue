@@ -16,7 +16,7 @@
     </div>
 
     <div style="width: 90%;margin: 50px auto 0;text-align: center">
-      <img style="width: 4rem" src="../../assets/logo.png">
+      <img style="width: 4rem" src="../../assets/logo.png" alt="..." />
       <h3>欢迎来到片刻</h3>
 
       <div style="margin-top: 40px">
@@ -108,10 +108,11 @@
   import {sendMessages} from "../../api/sms";
   import {login} from "../../api/auth";
   import {
+    delMomentAuth,
     delMomentUser,
     delTokenValue,
     getMomentUser,
-    getTokenValue,
+    getTokenValue, setMomentAuth,
     setMomentUser,
     setTokenValue
   } from "../../utils/auth";
@@ -270,11 +271,13 @@
         login(data).then(res => {
           delTokenValue();
           delMomentUser();
+          delMomentAuth();
           if (!res.success) {
             Toast({message: res.message});
             thit.loadingLogin = false;
           } else {
             setTokenValue(res.data.tokenValue);
+            setMomentAuth(JSON.stringify(data));
             document.cookie = res.data.tokenName + "=" + res.data.tokenValue;
 
             userInfo().then(res2 => {

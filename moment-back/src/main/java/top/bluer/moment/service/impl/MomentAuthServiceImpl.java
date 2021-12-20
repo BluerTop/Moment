@@ -70,17 +70,17 @@ public class MomentAuthServiceImpl implements MomentAuthService {
         switch (loginType) {
             case "PC": {
                 MomentAccount momentAccount = this.loginPC(loginParamsDto);
-                StpUtil.login(momentAccount.getAccountPhone(), SaLoginModel.create().setIsLastingCookie(true).setDevice("P"));
+                StpUtil.login(momentAccount.getAccountPhone(), true);
                 break;
             }
             case "PP": {
                 MomentAccount momentAccount = this.loginPP(loginParamsDto);
-                StpUtil.login(momentAccount.getAccountPhone(), SaLoginModel.create().setIsLastingCookie(true).setDevice("P"));
+                StpUtil.login(momentAccount.getAccountPhone(), true);
                 break;
             }
             case "MP": {
                 MomentAccount momentAccount = this.loginMP(loginParamsDto);
-                StpUtil.login(momentAccount.getAccountMail(), SaLoginModel.create().setIsLastingCookie(true).setDevice("M"));
+                StpUtil.login(momentAccount.getAccountMail(), true);
                 break;
             }
             default:
