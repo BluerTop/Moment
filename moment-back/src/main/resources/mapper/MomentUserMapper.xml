@@ -145,6 +145,16 @@
         select *
         from moment_user
     </select>
+    <!--用户详细信息-->
+    <select id="getMomentUserInfo" resultMap="MomentUserInfoVoMap">
+        select mu.*, count(follow.followers_id) follow_num, count(fan.followed_id) fan_num
+        FROM moment_user mu
+                 left join moment_follow follow
+                           on mu.user_id = follow.followers_id and follow.status = 0 and mu.user_status = 'E'
+                 left join moment_follow fan
+                           on mu.user_id = fan.followed_id and fan.status = 0 and mu.user_status = 'E'
+        where mu.user_id = #{id} and mu.user_status = 'E'
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="userId" useGeneratedKeys="true">

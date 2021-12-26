@@ -45,10 +45,10 @@ public class MomentDynamicController {
         return momentDynamicService.delOrRec(id, type);
     }
 
-    @ApiOperation("发现-分页查询动态列表")
+    @ApiOperation("发现动态列表")
     @GetMapping("/pages")
-    public PageInfo<MomentDynamicAndUserVo> queryByPage(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-        return momentDynamicService.queryByPage(page, size);
+    public PageInfo<MomentDynamicAndUserVo> queryByPage(@RequestParam("index") Integer index,  @RequestParam("type") String type) {
+        return momentDynamicService.queryByPage(index,type);
     }
 
     @SaCheckLogin

@@ -4,7 +4,7 @@ import {getTokenValue} from "../utils/auth";
 // 通用上传文件接口
 export function uploadFile(data, describe) {
   return request({
-    url: '/momentOther/uploadFile/' + describe,
+    url: '/momentOther/uploadFile?describe=' + describe,
     method: 'post',
     headers: {
       'moment-token': getTokenValue(),
@@ -17,7 +17,7 @@ export function uploadFile(data, describe) {
 // 获取unsplash随机图片
 export function getPhotos(index) {
   return request({
-    url: '/momentOther/photos/'+index,
+    url: '/momentOther/photos?index=' + index,
     method: 'get',
   })
 }

@@ -13,10 +13,10 @@
     <!--查询单个-->
     <select id="queryById" resultMap="MomentLikesMap">
         select id,
-               dynamic_id,
-               user_id,
-               time,
-               status
+        dynamic_id,
+        user_id,
+        time,
+        status
         from moment_likes
         where id = #{id}
     </select>
@@ -45,6 +45,24 @@
         </where>
     </select>
 
+    <!--用户获赞数-->
+    <select id="userLikeCount" resultType="java.lang.Integer">
+        select count(0)
+        from moment_likes
+        <where>
+            status = 0
+            <if test="dynamicId != null and dynamicId.size() > 0">
+                and dynamic_id in
+                <foreach collection="dynamicId" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Integer">
         select count(1)
@@ -67,6 +85,7 @@
             </if>
         </where>
     </select>
+
     <select id="getInfo" resultMap="MomentLikesMap">
         select *
         from moment_likes

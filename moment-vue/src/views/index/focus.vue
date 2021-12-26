@@ -13,7 +13,7 @@
 
     <!--动态-->
     <div style="width: 95%; margin: 10px auto;padding-bottom: 20px" class="box">
-      <el-skeleton v-show="itemsNullShow" style="width: 100%; margin: 10px auto 20px auto;" animated>
+      <el-skeleton v-show="items.length === 0 && status === 2 || status === 0" style="width: 100%; margin: 10px auto 20px auto;" animated>
         <template slot="template">
           <div style="width: 100%;">
             <div class="van-cell van-cell--center" style="border-radius: 8px 8px 0 0 ">
@@ -119,15 +119,6 @@
           <div class="box">
             <div class="box1">
               <div class="box2" style="border: none">
-                <!--可见范围 O-自己可见，F-粉丝可见，A-所有人可见，C-亲密关系可见-->
-                <van-button icon="shield-o" type="default" round disabled
-                            style="border: none;background-color: #F2F2F2;font-weight: 500;text-align: center;margin-right: 10px"
-                            size="small">
-                  {{ item.authority === 'O' ? "自己可见" : "" }}
-                  {{ item.authority === 'F' ? "粉丝可见" : "" }}
-                  {{ item.authority === 'A' ? "所有人可见" : "" }}
-                  {{ item.authority === 'C' ? "亲密关系可见" : "" }}
-                </van-button>
                 <!--标签-->
                 <van-button type="default" round disabled v-for="(lable,ind) in item.labelList" :key="ind"
                             style="border: none;background-color: #F2F2F2;font-weight: 500;text-align: center;margin-right: 10px"
@@ -136,14 +127,12 @@
                 </van-button>
               </div>
             </div>
-
           </div>
         </div>
       </div>
       <van-divider @click="getItemsBefore" v-show="itemsIndexShow && items.length > 0">点击加载更多</van-divider>
       <van-divider v-show="!itemsIndexShow && items.length > 0">到底了...</van-divider>
     </div>
-    <unsplash/>
   </div>
 </template>
 

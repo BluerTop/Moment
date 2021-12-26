@@ -22,6 +22,13 @@ public interface MomentUserService {
     MomentUser queryById(String userId);
 
     /**
+     * @description: 用户详细信息
+     * @date: 2021/12/26 14:50
+     * @codes: 扁鹊
+     **/
+    MomentUserInfoVo getMomentUserInfo();
+
+    /**
      * @description: 修改数据
      * @date: 2021/11/28 12:09
      * codes: 扁鹊
@@ -49,5 +56,4 @@ public interface MomentUserService {
      * @return 是否成功
      */
     boolean deleteById(String userId);
-
 }

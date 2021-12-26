@@ -13,7 +13,7 @@
 
     <!--动态-->
     <div style="width: 95%; margin: 10px auto;padding-bottom: 20px" class="box">
-      <el-skeleton v-show="(items.length === 0 || status === 1) || status === 0" style="width: 100%; margin: 10px auto 20px auto;" animated>
+      <el-skeleton v-show="items.length === 0 && status === 2 || status === 0" style="width: 100%; margin: 10px auto 20px auto;" animated>
         <template slot="template">
           <div style="width: 100%;">
             <div class="van-cell van-cell--center" style="border-radius: 8px 8px 0 0 ">
@@ -152,7 +152,6 @@
       <van-divider @click="getItemsBefore" v-show="itemsIndexShow && items.length > 0">点击加载更多</van-divider>
       <van-divider v-show="!itemsIndexShow && items.length > 0">到底了...</van-divider>
     </div>
-    <unsplash/>
   </div>
 </template>
 

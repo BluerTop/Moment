@@ -75,14 +75,16 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
     public MomentDynamicAndUserVo queryById(String id) {
         MomentDynamicAndUserVo item = momentDynamicMapper.queryById(id);
         // 可见范围：O-自己可见，F-粉丝可见，A-所有人可见，C-亲密关系可见
-        MomentUser user = saTokenConfig.getUser();
-        MomentLikes info = momentLikesMapper.getInfo(MomentLikes.builder().dynamicId(id).userId(user.getUserId()).status(0).build());
-        item.setLikeStatus(Objects.nonNull(info));
         if (StpUtil.isLogin()) {
             String userId = saTokenConfig.getUser().getUserId();
+            item.setLikeStatus(Objects.nonNull(momentLikesMapper.getInfo(MomentLikes.builder().dynamicId(id).userId(userId).status(0).build())));
             item.setFollowStatus(momentFollowMapper.count(MomentFollow.builder().followersId(userId).followedId(item.getUserId()).status(0).build()));
+            if (item.getAuthority().equals("A")) {
+                return dataProcessing(item);
+            }
         } else {
             item.setFollowStatus(0);
+            item.setLikeStatus(false);
         }
         if (item.getAuthority().equals("A")) {
             return dataProcessing(item);
@@ -90,21 +92,18 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
         if (Objects.isNull(StpUtil.getLoginIdDefaultNull())) {
             throw new BizException("无权操作");
         }
-        if (Objects.equals(user.getUserId(), item.getUserId())) {
-            return dataProcessing(item);
-        }
         throw new BizException("无权操作");
     }
 
     /**
-     * @description: 分页查询 公共
+     * @description: 发现动态列表
      * @date: 2021/12/3 17:23
      * codes: 扁鹊
      **/
     @Override
-    public PageInfo<MomentDynamicAndUserVo> queryByPage(Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        List<MomentDynamicAndUserVo> items = this.momentDynamicMapper.queryAllByLimit(MomentDynamic.builder().authority("A").status("M").build());
+    public PageInfo<MomentDynamicAndUserVo> queryByPage(Integer index, String type) {
+        PageHelper.startPage(index, 10);
+        List<MomentDynamicAndUserVo> items = this.momentDynamicMapper.queryAllByLimit(MomentDynamic.builder().type(type).authority("A").status("M").build());
         PageInfo<MomentDynamicAndUserVo> pageInfo = new PageInfo<>(items);
         items.forEach(this::dataProcessing);
         pageInfo.setList(items);

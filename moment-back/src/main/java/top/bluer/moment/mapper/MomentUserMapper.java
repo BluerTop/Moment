@@ -27,6 +27,13 @@ public interface MomentUserMapper {
     MomentUser queryById(String userId);
 
     /**
+     * @description: 用户详细信息
+     * @date: 2021/12/26 14:51
+     * @codes: 扁鹊
+     **/
+    MomentUserInfoVo getMomentUserInfo(@Param("id") String userId);
+
+    /**
      * @description: 推荐用户列表
      * @date: 2021/12/25 13:47
      * @codes: 扁鹊

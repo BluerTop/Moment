@@ -39,6 +39,13 @@ public interface MomentLikesMapper {
     int count(MomentLikes momentLikes);
 
     /**
+     * @description: 用户获赞数
+     * @date: 2021/12/23 18:18
+     * @codes: 扁鹊
+     **/
+    int userLikeCount(@Param("userId") String uid,@Param("dynamicId") List<String> dynamicId);
+
+    /**
      * @description: 新增数据
      * @date: 2021/12/23 18:18
      * @codes: 扁鹊

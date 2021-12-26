@@ -7,6 +7,11 @@
       />
     </div>
 
+    <div style="width: 95%;margin: 10px auto;">
+      <el-card shadow="hover" style="text-align: center;font-weight: 500">
+        消息模块暂未开发
+      </el-card>
+    </div>
   </div>
 </template>
 

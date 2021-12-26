@@ -14,10 +14,10 @@ export function addDynamic(data) {
   })
 }
 
-// 分页查询动态列表 公共
-export function pages(page, size) {
+// 发现动态列表
+export function pages(index, type) {
   return request({
-    url: '/momentDynamic/pages/' + page + '/' + size,
+    url: '/momentDynamic/pages?index=' + index + "&type=" + type,
     method: 'get',
     headers: {
       'moment-token': getTokenValue(),
@@ -26,10 +26,10 @@ export function pages(page, size) {
   })
 }
 
-// 查询我的动态列表
+// 我的动态列表
 export function queryByMy(index) {
   return request({
-    url: '/momentDynamic/queryByMy/' + index,
+    url: '/momentDynamic/queryByMy?index=' + index,
     method: 'get',
     headers: {
       'moment-token': getTokenValue(),
@@ -38,10 +38,10 @@ export function queryByMy(index) {
   })
 }
 
-// 查询关注动态列表
-export function queryByMyFocus() {
+// 我的关注动态列表
+export function queryByMyFocus(index) {
   return request({
-    url: '/momentDynamic/queryByMyFocus',
+    url: '/momentDynamic/queryByMyFocus?index=' + index,
     method: 'get',
     headers: {
       'moment-token': getTokenValue(),
@@ -50,10 +50,10 @@ export function queryByMyFocus() {
   })
 }
 
-// 根据id获取单条动态信息 通用
+// 单条动态信息
 export function getInfo(id) {
   return request({
-    url: '/momentDynamic/getInfo/' + id,
+    url: '/momentDynamic/getInfo?id=' + id,
     method: 'get',
     headers: {
       'moment-token': getTokenValue(),
@@ -65,7 +65,7 @@ export function getInfo(id) {
 // 删除动态/恢复动态
 export function delOrRec(id, type) {
   return request({
-    url: '/momentDynamic/delOrRec/' + id + '/' + type,
+    url: '/momentDynamic/delOrRec?id=' + id + '&type=' + type,
     method: 'get',
     headers: {
       'moment-token': getTokenValue(),

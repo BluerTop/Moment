@@ -29,11 +29,11 @@ public interface MomentDynamicService {
     boolean delOrRec(String id, String type);
 
     /**
-     * @description: 分页查询 公共
+     * @description: 发现动态列表
      * @date: 2021/12/3 17:23
      * codes: 扁鹊
      **/
-    PageInfo<MomentDynamicAndUserVo> queryByPage(Integer page, Integer size);
+    PageInfo<MomentDynamicAndUserVo> queryByPage(Integer index, String type);
 
     /**
      * @description: 我的动态列表

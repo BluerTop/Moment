@@ -59,4 +59,8 @@ public class MomentUserInfoVo {
      * 粉丝数
      */
     private Integer fanNum;
+    /**
+     * 获赞数
+     */
+    private Integer likes;
 }

@@ -4,9 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import top.bluer.moment.config.SaTokenConfig;
 import top.bluer.moment.entity.MomentUser;
 import top.bluer.moment.entity.vo.MomentUserInfoVo;
 import top.bluer.moment.service.MomentUserService;
@@ -28,13 +25,10 @@ public class MomentUserController {
     @Resource
     private MomentUserService momentUserService;
 
-    @Resource
-    private SaTokenConfig saTokenConfig;
-
-    @ApiOperation("获取用户详细信息")
+    @ApiOperation("用户详细信息")
     @GetMapping("/info")
-    public MomentUser getMomentUserInfo() {
-        return saTokenConfig.getUser();
+    public MomentUserInfoVo getMomentUserInfo() {
+        return momentUserService.getMomentUserInfo();
     }
 
     @ApiOperation("修改资料")

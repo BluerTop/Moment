@@ -26,6 +26,7 @@
     <div>
       <focus v-show="active === 'focus'"/>
       <mine v-show="active === 'mine'"/>
+      <unsplash/>
     </div>
   </div>
 </template>
