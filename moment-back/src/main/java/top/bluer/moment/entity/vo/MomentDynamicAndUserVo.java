@@ -18,8 +18,7 @@ public class MomentDynamicAndUserVo {
     /**
      * 主键id
      */
-    private Integer id;
-    private String sId;
+    private String id;
     /**
      * 动态类型：T-文字，P-图片，G-图文，V-视频
      */
@@ -71,7 +70,7 @@ public class MomentDynamicAndUserVo {
     /**
      * 用户id
      */
-    private Integer userId;
+    private String userId;
     /**
      * 创建时间
      */
@@ -93,4 +92,12 @@ public class MomentDynamicAndUserVo {
      * 点赞数
      */
     private Integer likes;
+    /**
+     * 是否点赞
+     */
+    private boolean likeStatus;
+    /**
+     * 是否关注：0-否、1-是
+     */
+    private long followStatus;
 }

@@ -30,22 +30,6 @@
       </div>
     </div>
 
-    <!--  底部  -->
-    <div style="font-size: 10px;color: #82848a;position: fixed; bottom: 70px; width:100%">
-      <van-popover
-        v-model="showPopover"
-        placement="top-end"
-        trigger="click"
-        :actions="actions"
-        style="float: right;margin-right: 30px"
-        @select="onSelect"
-      >
-        <template #reference>
-          <el-image :src="icon.add" style="width: 40px;"/>
-        </template>
-      </van-popover>
-    </div>
-
   </div>
 
 </template>
@@ -144,20 +128,14 @@
       toPath(path) {
         this.$router.push(path);
       },
-      onSelect(action) {
-        this.toRel(action.uri)
-      },
       // 跳转页面
       toRel(path) {
         this.show = false;
         const _t = this;
         verifyLogin().then(res => {
           if (res.data){
-            setTimeout(function () {
               _t.$router.push(path);
-            }, 100);
           } else {
-            Toast('您暂未登录，请先登录');
             _t.$router.push("/login");
           }
         })

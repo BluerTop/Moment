@@ -22,13 +22,12 @@ public class MomentAccountServiceImpl implements MomentAccountService {
     private MomentAccountMapper momentAccountMapper;
 
     /**
-     * 通过ID查询单条数据
-     *
-     * @param accountId 主键
-     * @return 实例对象
-     */
+    * @description: 通过ID查询单条数据
+    * @date: 2021/12/23 19:01
+    * @codes: 扁鹊
+    **/
     @Override
-    public MomentAccount queryById(Integer accountId) {
+    public MomentAccount queryById(String accountId) {
         return this.momentAccountMapper.queryById(accountId);
     }
 
@@ -49,7 +48,7 @@ public class MomentAccountServiceImpl implements MomentAccountService {
      **/
     @Override
     public MomentAccount insert(MomentAccount momentAccount) {
-        this.momentAccountMapper.insert(momentAccount);
+        momentAccountMapper.insert(momentAccount);
         return momentAccount;
     }
 
@@ -60,31 +59,7 @@ public class MomentAccountServiceImpl implements MomentAccountService {
     **/
     @Override
     public MomentAccount update(MomentAccount momentAccount) {
-        this.momentAccountMapper.update(momentAccount);
-        return this.queryById(momentAccount.getAccountId());
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param momentAccount 筛选条件
-     * @param pageRequest   分页对象
-     * @return 查询结果
-     */
-    @Override
-    public Page<MomentAccount> queryByPage(MomentAccount momentAccount, PageRequest pageRequest) {
-        long total = this.momentAccountMapper.count(momentAccount);
-        return new PageImpl<>(this.momentAccountMapper.queryAllByLimit(momentAccount, pageRequest), pageRequest, total);
-    }
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param accountId 主键
-     * @return 是否成功
-     */
-    @Override
-    public boolean deleteById(Integer accountId) {
-        return this.momentAccountMapper.deleteById(accountId) > 0;
+        momentAccountMapper.update(momentAccount);
+        return queryById(momentAccount.getAccountId());
     }
 }

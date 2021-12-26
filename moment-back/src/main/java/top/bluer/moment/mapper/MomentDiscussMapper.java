@@ -22,15 +22,14 @@ public interface MomentDiscussMapper {
      * @date: 2021/12/5 19:41
      * codes: 扁鹊
      **/
-    List<MomentDiscussAndUserVo> queryByDynamicId(@Param("dynamicId") Integer dynamicId);
+    List<MomentDiscussAndUserVo> queryByDynamicId(@Param("dynamicId") String dynamicId);
 
     /**
-     * 通过ID查询单条数据
-     *
-     * @param id 主键
-     * @return 实例对象
-     */
-    MomentDiscuss queryById(Integer id);
+     * @description: 通过ID查询单条数据
+     * @date: 2021/12/23 19:04
+     * @codes: 扁鹊
+     **/
+    MomentDiscuss queryById(String id);
 
     /**
      * 查询指定行数据
@@ -82,12 +81,11 @@ public interface MomentDiscussMapper {
     int update(MomentDiscuss momentDiscuss);
 
     /**
-     * 通过主键删除数据
-     *
-     * @param id 主键
-     * @return 影响行数
-     */
-    int deleteById(Integer id);
+     * @description: 通过主键删除数据
+     * @date: 2021/12/25 10:50
+     * @codes: 扁鹊
+     **/
+    int deleteById(@Param("id") String id,@Param("type") Integer levelType);
 
 }
 

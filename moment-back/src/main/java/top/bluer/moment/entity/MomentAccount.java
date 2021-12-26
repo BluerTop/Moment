@@ -19,7 +19,7 @@ public class MomentAccount implements Serializable {
     /**
      * 账户id
      */
-    private Integer accountId;
+    private String accountId;
     /**
      * 账户类型：P-手机号，M-邮箱
      */
@@ -43,6 +43,6 @@ public class MomentAccount implements Serializable {
     /**
      * 账户-用户id
      */
-    private Integer userId;
+    private String userId;
 }
 

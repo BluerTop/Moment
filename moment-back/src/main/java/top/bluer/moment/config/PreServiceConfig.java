@@ -3,13 +3,10 @@ package top.bluer.moment.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.PostConstruct;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -31,19 +28,16 @@ public class PreServiceConfig implements BeanPostProcessor {
     @PostConstruct
     public void loadKeyJasyptInit() {
         try {
-            File file = ResourceUtils.getFile("classpath:jasypt.txt");
-            if (file.isFile() && file.exists()) {
-                InputStreamReader isr = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(isr);
-                String lineTxt = br.readLine();
-                System.setProperty("jasypt.encryptor.password", lineTxt);
-                log.info("加载密钥jasypt成功...");
-                br.close();
-            } else {
-                log.error("加载密钥jasypt失败");
-            }
+            ClassPathResource resource = new ClassPathResource("jasypt.txt");
+            InputStream inputStream = resource.getInputStream();
+            InputStreamReader isr = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader br = new BufferedReader(isr);
+            String lineTxt = br.readLine();
+            System.setProperty("jasypt.encryptor.password", lineTxt);
+            log.info("加载密钥jasypt成功...");
+            br.close();
         } catch (Exception e) {
-            log.error("加载密钥jasypt失败-无法连接到服务器");
+            log.error("加载密钥jasypt失败");
         }
     }
 }

@@ -19,7 +19,7 @@ public class MomentDynamic implements Serializable {
     /**
      * 主键id
      */
-    private Integer id;
+    private String id;
     /**
      * 动态类型：T-文字，P-图片，G-图文，V-视频
      */
@@ -47,7 +47,7 @@ public class MomentDynamic implements Serializable {
     /**
      * 用户id
      */
-    private Integer userId;
+    private String userId;
     /**
      * 创建时间
      */

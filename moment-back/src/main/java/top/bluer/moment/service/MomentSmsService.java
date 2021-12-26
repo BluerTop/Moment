@@ -32,7 +32,7 @@ public interface MomentSmsService {
      * @param aliId 主键
      * @return 实例对象
      */
-    MomentSms queryById(Integer aliId);
+    MomentSms queryById(String aliId);
 
     /**
      * 分页查询
@@ -65,6 +65,6 @@ public interface MomentSmsService {
      * @param aliId 主键
      * @return 是否成功
      */
-    boolean deleteById(Integer aliId);
+    boolean deleteById(String aliId);
 
 }

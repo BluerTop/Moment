@@ -1,8 +1,10 @@
 package top.bluer.moment.service;
 
+import com.github.pagehelper.PageInfo;
 import top.bluer.moment.entity.MomentUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import top.bluer.moment.entity.vo.MomentUserInfoVo;
 
 /**
  * 用户表(MomentUser)表服务接口
@@ -17,7 +19,7 @@ public interface MomentUserService {
      * @date: 2021/11/27 13:49
      * codes: 扁鹊
      **/
-    MomentUser queryById(Integer userId);
+    MomentUser queryById(String userId);
 
     /**
      * @description: 修改数据
@@ -34,13 +36,11 @@ public interface MomentUserService {
     MomentUser insert(MomentUser momentUser);
 
     /**
-     * 分页查询
-     *
-     * @param momentUser  筛选条件
-     * @param pageRequest 分页对象
-     * @return 查询结果
-     */
-    Page<MomentUser> queryByPage(MomentUser momentUser, PageRequest pageRequest);
+     * @description: 推荐用户列表
+     * @date: 2021/12/25 12:19
+     * @codes: 扁鹊
+     **/
+    PageInfo<MomentUserInfoVo> recommend(MomentUser momentUser, Integer page, Integer size);
 
     /**
      * 通过主键删除数据
@@ -48,6 +48,6 @@ public interface MomentUserService {
      * @param userId 主键
      * @return 是否成功
      */
-    boolean deleteById(Integer userId);
+    boolean deleteById(String userId);
 
 }

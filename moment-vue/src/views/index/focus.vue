@@ -6,14 +6,14 @@
       </van-cell-group>
     </div>
     <div v-show="status === 2">
-      <van-cell-group inset :border="false" v-show="itemsNullShow">
-        <van-cell title="你暂未关注任何人" value="前往关注" is-link @click="toRel('/graphic')" :clickable="true"/>
+      <van-cell-group inset :border="false" v-show="listFollow">
+        <van-cell title="你暂未关注任何人" value="前往关注" is-link @click="toRel('/recommend')" :clickable="true"/>
       </van-cell-group>
     </div>
 
     <!--动态-->
-    <div v-show="status === 2 && !itemsNullShow" style="width: 90%; margin: 10px auto;padding-bottom: 20px">
-      <el-skeleton v-show="itemsShow" style="width: 100%; margin: 10px auto 20px auto;" animated>
+    <div style="width: 95%; margin: 10px auto;padding-bottom: 20px" class="box">
+      <el-skeleton v-show="itemsNullShow" style="width: 100%; margin: 10px auto 20px auto;" animated>
         <template slot="template">
           <div style="width: 100%;">
             <div class="van-cell van-cell--center" style="border-radius: 8px 8px 0 0 ">
@@ -56,7 +56,8 @@
           </div>
         </template>
       </el-skeleton>
-      <div v-for="(item,index) in items" :key="index" style="margin-bottom: 20px">
+      <div v-for="(item,index) in items" :key="index"
+           style="margin-bottom: 20px;border-radius: 8px;background-color: white;padding: 10px">
         <div style="width: 100%;">
           <div class="van-cell van-cell--center" style="border-radius: 8px 8px 0 0 ">
             <i class="van-icon van-cell__left-icon">
@@ -78,10 +79,9 @@
           </div>
         </div>
         <!--数据-->
-        <div @click="toDetails(item.sid)">
+        <div @click="toDetails(item.id)">
           <!--图片数据-->
           <div style="padding-bottom: 20px" v-show="item.type === 'P' || item.type === 'G'">
-
             <!--外部嵌套层-->
             <div class="box">
               <div class="box1" style="display: flex;align-items: center;border-radius: 10px">
@@ -92,7 +92,6 @@
                             fit="cover">
                     <div slot="placeholder" class="image-slot"
                          style="height: 300px;width: 100%;color: darkgrey;text-align: center;line-height: 300px">
-                      <van-loading size="50"/>
                     </div>
                     <div slot="error" class="image-slot"
                          style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
@@ -141,13 +140,10 @@
           </div>
         </div>
       </div>
+      <van-divider @click="getItemsBefore" v-show="itemsIndexShow && items.length > 0">点击加载更多</van-divider>
+      <van-divider v-show="!itemsIndexShow && items.length > 0">到底了...</van-divider>
     </div>
     <unsplash/>
-    <div style="z-index: 100;position: fixed; bottom: 70px;width:100%;text-align:center">
-      <el-button type="primary" icon="el-icon-upload2" v-if="btnFlag" @click="backTop"
-                 style="border: none;background-color: #576b95" size="mini" circle></el-button>
-    </div>
-    <Nav active="/"/>
   </div>
 </template>
 
@@ -158,6 +154,7 @@ import {Toast} from "vant";
 import preventBack from 'vue-prevent-browser-back';
 import {verifyLogin} from "../../api/auth";
 import {delMomentUser, delTokenValue} from "../../utils/auth";
+import {listFollow} from "../../api/follow";
 
 export default {
   mixins: [preventBack],//注入
@@ -165,74 +162,84 @@ export default {
   data() {
     return {
       // 1-未登录、2-已登录
-      status: 1,
-
+      status: 0,
       // 动态数据
       items: [],
-      // 动态提示单元格
-      itemsNullShow: false,
+      // 动态列表
+      itemsNullShow: true,
+      // 关注列表
+      listFollow: false,
+      // 加载提示
+      itemsIndexShow: true,
       // 动态骨架屏
       itemsShow: true,
-
-      // 回到顶部
-      btnFlag: false,
-      scrollTop: 0,
-
+      // 分页
+      index: 1,
+      // 标题
       active: '关注',
     }
   },
   mounted() {
+    window.setInterval(function () {
+
+    }, 500);
     this.init()
-    window.addEventListener('scroll', this.scrollToTop)
-  },
-  destroyed() {
-    window.removeEventListener('scroll', this.scrollToTop)
   },
   methods: {
     init() {
-      const vanToast = Toast.loading({
-        overlay: true,
-        forbidClick: true,
-        message: 'Loading...'
-      });
       verifyLogin().then(res => {
         if (res.data) {
           this.status = 2;
-          this.queryByMy();
+          this.queryByMyFocus();
         } else {
-          delMomentUser();
-          delTokenValue();
           this.itemsShow = false;
           this.status = 1;
+          delMomentUser();
+          delTokenValue();
         }
       });
 
-      setTimeout(() => {
-        vanToast.clear()
-      }, 200);
     },
     // 动态图片下载
     itemsDowTop() {
       Toast('点赞~')
     },
-
+    // 加载下一页前调
+    getItemsBefore() {
+      this.index += 1;
+      this.queryByMyFocus();
+    },
     // 查询我的动态列表
-    queryByMy() {
+    queryByMyFocus() {
       const _t = this;
-      queryByMyFocus().then(res => {
-        if (res.success) {
-          var data = res.data;
-          if (data.length === 0) {
-            _t.itemsNullShow = true;
-          } else {
-            _t.itemsNullShow = false;
-            _t.itemsShow = false;
-            _t.items = data
-          }
-        }
-      }).catch(reason => {
-        _t.itemsNullShow = true;
+      const vanToast = Toast.loading({
+        forbidClick: true,
+        message: 'Loading...'
       });
+      listFollow("").then(re => {
+        const data = re.data;
+        if (data.length === 0) {
+          _t.listFollow = true
+          _t.itemsNullShow = false
+        } else {
+          queryByMyFocus(_t.index).then(res => {
+            if (res.success) {
+              const data = res.data;
+              const list = data.list;
+              list.forEach(item => {
+                _t.items.push(item)
+              })
+              if (data.size === 0) {
+                _t.itemsIndexShow = false
+              }
+              setTimeout(() => {
+                _t.itemsNullShow = false
+                vanToast.clear()
+              }, 200);
+            }
+          });
+        }
+      })
     },
 
     // 点赞
@@ -241,7 +248,7 @@ export default {
     },
     // 查看详情
     toDetails(id) {
-      this.$router.push('/details/' + id)
+      this.$router.push('/details?id=' + id)
     },
     // 关注页
     toIndex() {
@@ -265,30 +272,6 @@ export default {
         }
       })
     },
-
-    // 点击图片回到顶部方法，加计时器是为了过渡顺滑
-    backTop() {
-      const that = this;
-      const vanToast = Toast.loading({
-        duration: 0,
-        overlay: true,
-        forbidClick: true,
-        message: 'Loading...'
-      });
-      setTimeout(() => {
-        that.scrollTop = 0
-        document.documentElement.scrollTop = document.body.scrollTop = 0
-        vanToast.clear()
-      }, 200);
-    },
-
-    // 为了计算距离顶部的高度，当高度大于60显示回顶部图标，小于60则隐藏
-    scrollToTop() {
-      const that = this
-      that.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      that.btnFlag = that.scrollTop > 1000;
-    },
-
     // 获取设备宽度
     deviceWidth() {
       return window.innerWidth;

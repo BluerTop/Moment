@@ -11,7 +11,7 @@ export function setMomentAuth(momentAuth) {
 }
 
 export function delMomentAuth() {
-  return localStorage.getItem(MomentAuth) == null ? null : JSON.parse(localStorage.getItem(MomentAuth));
+  return localStorage.removeItem(MomentAuth);
 }
 
 export function getTokenValue() {

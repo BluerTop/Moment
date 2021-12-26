@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 import top.bluer.moment.entity.vo.MomentDynamicAndUserVo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,18 +18,17 @@ import java.util.List;
 public interface MomentDynamicMapper {
 
     /**
-    * @description: 根据id获取单条动态信息
-    * @date: 2021/12/3 17:39
-    * codes: 扁鹊
-    **/
-    MomentDynamicAndUserVo queryById(Integer id);
-    List<MomentDynamic> queryB(Integer id);
+     * @description: 根据id获取单条动态信息
+     * @date: 2021/12/3 17:39
+     * codes: 扁鹊
+     **/
+    MomentDynamicAndUserVo queryById(String id);
 
     /**
-    * @description: 查询指定行数据
-    * @date: 2021/12/3 17:25
-    * codes: 扁鹊
-    **/
+     * @description: 查询指定行数据
+     * @date: 2021/12/3 17:25
+     * codes: 扁鹊
+     **/
     List<MomentDynamicAndUserVo> queryAllByLimit(@Param("item") MomentDynamic momentDynamic);
 
     /**
@@ -36,7 +36,7 @@ public interface MomentDynamicMapper {
      * @date: 2021/12/2 18:19
      * codes: 扁鹊
      **/
-    int delOrRec(@Param("id") Integer id, @Param("status") String status);
+    int delOrRec(@Param("id") String id, @Param("status") String status);
 
     /**
      * @description: 发布动态
@@ -44,6 +44,13 @@ public interface MomentDynamicMapper {
      * codes: 扁鹊
      **/
     int insert(MomentDynamic momentDynamic);
+
+    /**
+     * @description: 我的关注动态列表
+     * @date: 2021/12/26 12:28
+     * @codes: 扁鹊
+     **/
+    List<MomentDynamicAndUserVo> queryByMyFocus(@Param("ids") List<String> collect, @Param("authority") ArrayList<String> strings, @Param("status") String m);
 
     /**
      * 统计总行数

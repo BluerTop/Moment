@@ -18,7 +18,9 @@
     <div style="width: 90%;margin: 50px auto 0;text-align: center">
       <img style="width: 4rem" src="../../assets/logo.png" alt="..." />
       <h3>欢迎来到片刻</h3>
-
+      <p v-show="loginType === 'PC'" style="font-weight: 500;font-size: 15px; float: left;margin-left: 15px">手机登录</p>
+      <p v-show="loginType === 'PP'" style="font-weight: 500;font-size: 15px; float: left;margin-left: 15px">密码登录</p>
+      <p v-show="loginType === 'MP'" style="font-weight: 500;font-size: 15px; float: left;margin-left: 15px">邮箱登录</p>
       <div style="margin-top: 40px">
         <div v-show="loginType === 'PC'">
           <van-cell-group :border="false" style="height: 100px;">
@@ -153,11 +155,11 @@
       }
     },
     mounted() {
-      var momentUser = getMomentUser();
+      const momentUser = getMomentUser();
       if (momentUser !== null){
         this.$router.push("/");
       }
-      var tokenValue = getTokenValue();
+      const tokenValue = getTokenValue();
       if (tokenValue !== null){
         this.$router.push("/");
       }
@@ -168,7 +170,7 @@
         Toast.loading({
           forbidClick: true,
         });
-        var thit = this;
+        const thit = this;
         thit.loadingCode = true;
         let second = 90;
         const timer = setInterval(() => {
@@ -181,8 +183,8 @@
           }
         }, 1000);
 
-        var reg = /^0?1[3|4|5|6|7|8][0-9]\d{8}$/;
-        var data;
+        const reg = /^0?1[3|4|5|6|7|8][0-9]\d{8}$/;
+        let data;
         if (thit.loginType === 'PC') {
           if (!reg.test(thit.from_PC.accountPhone)) {
             Toast({message: '手机号错误，请正确输入11位手机号'});
@@ -214,8 +216,8 @@
       },
       // 参数校验
       parameterVerification() {
-        var thit = this;
-        var reg = /^0?1[3|4|5|6|7|8][0-9]\d{8}$/;
+        const thit = this;
+        const reg = /^0?1[3|4|5|6|7|8][0-9]\d{8}$/;
         if (this.loginType === 'PC') {
           if (!reg.test(thit.from_PC.accountPhone)) {
             Toast({message: '手机号错误，请正确输入11位手机号'});
@@ -235,7 +237,7 @@
             return false;
           }
         } else if (this.loginType === 'MP') {
-          var strRegex = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+          const strRegex = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
           if (!strRegex.test(thit.from_MP.accountMail)) {
             Toast({message: '邮箱格式错误'});
             return false;
@@ -252,20 +254,20 @@
 
       // 登录
       login() {
-        var thit = this;
-        if (!thit.parameterVerification()) {
+        const that = this;
+        if (!that.parameterVerification()) {
           return false;
         }
-        thit.loadingLogin = true;
-        var data;
+        that.loadingLogin = true;
+        let data;
         if (this.loginType === 'PC') {
-          data = thit.from_PC;
+          data = that.from_PC;
         } else if (this.loginType === 'PP') {
-          data = thit.from_PP;
+          data = that.from_PP;
         } else if (this.loginType === 'MP') {
-          data = thit.from_MP;
+          data = that.from_MP;
         } else {
-          thit.loadingLogin = false;
+          that.loadingLogin = false;
           return;
         }
         login(data).then(res => {
@@ -274,7 +276,7 @@
           delMomentAuth();
           if (!res.success) {
             Toast({message: res.message});
-            thit.loadingLogin = false;
+            that.loadingLogin = false;
           } else {
             setTokenValue(res.data.tokenValue);
             setMomentAuth(JSON.stringify(data));
@@ -302,15 +304,17 @@
                 toast.message = `验证中...`;
               } else {
                 clearInterval(timer);
-                thit.loadingLogin = false;
+                that.loadingLogin = false;
                 // 手动清除 Toast
-                Toast.clear();
-                thit.$router.push("/discover");
+                toast.clear();
+                location.reload()
+                that.$router.go(0)
+                // that.$router.push("/discover");
               }
             }, 1000);
           }
         }).catch(res => {
-          thit.loadingLogin = false;
+          that.loadingLogin = false;
         })
       },
 
@@ -323,7 +327,7 @@
 
       // 切换登录方式
       switchLogin(type) {
-        var thit = this;
+        const thit = this;
         Toast.loading({
           message: '加载中...',
           overlay: true,

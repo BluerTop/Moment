@@ -13,7 +13,7 @@ import top.bluer.moment.mapper.MomentDiscussMapper;
 import top.bluer.moment.mapper.MomentDynamicMapper;
 import top.bluer.moment.service.MomentDiscussService;
 import org.springframework.stereotype.Service;
-import top.bluer.moment.utils.JasyptUtil;
+import top.bluer.moment.utils.RandomUtil;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -35,8 +35,6 @@ public class MomentDiscussServiceImpl implements MomentDiscussService {
     private SaTokenConfig saTokenConfig;
     @Resource
     private MomentDynamicMapper momentDynamicMapper;
-    @Resource
-    private JasyptUtil jasyptUtil;
 
     /**
      * @description: 发布留言
@@ -47,28 +45,27 @@ public class MomentDiscussServiceImpl implements MomentDiscussService {
     public MomentDiscuss insert(MomentDiscussDto momentDiscussDto) {
         MomentDiscuss momentDiscuss = MomentDiscuss.builder().build();
         BeanUtil.copyProperties(momentDiscussDto, momentDiscuss);
-        Integer userId = saTokenConfig.getUser().getUserId();
+        String userId = saTokenConfig.getUser().getUserId();
+        momentDiscuss.setId(RandomUtil.getRanId());
         momentDiscuss.setUserId(userId);
-        Integer id = Integer.valueOf(jasyptUtil.decryptUid(momentDiscuss.getDynamicId()));
-        Integer userId1 = momentDynamicMapper.queryById(id).getUserId();
+        String userId1 = momentDynamicMapper.queryById(momentDiscuss.getDynamicId()).getUserId();
         // 是否是作者：M-是，F-不是
         momentDiscuss.setAuthor(userId.equals(userId1) ? "M" : "F");
         momentDiscuss.setCreatTime(new Date());
         // 留言状态：M-正常、F-删除、A-审核中、P-审核不通过
         momentDiscuss.setStatus("M");
-        momentDiscuss.setDynamicId(String.valueOf(id));
+        momentDiscuss.setDynamicId(momentDiscuss.getDynamicId());
         this.momentDiscussMapper.insert(momentDiscuss);
         return momentDiscuss;
     }
 
     /**
-     * 通过ID查询单条数据
-     *
-     * @param id 主键
-     * @return 实例对象
-     */
+     * @description: 通过ID查询单条数据
+     * @date: 2021/12/23 19:03
+     * @codes: 扁鹊
+     **/
     @Override
-    public MomentDiscuss queryById(Integer id) {
+    public MomentDiscuss queryById(String id) {
         return this.momentDiscussMapper.queryById(id);
     }
 
@@ -83,13 +80,12 @@ public class MomentDiscussServiceImpl implements MomentDiscussService {
         if (Objects.nonNull(StpUtil.getLoginIdDefaultNull())) {
             user = saTokenConfig.getUser();
         }
-        int dId = Integer.parseInt(jasyptUtil.decryptUid(dynamicId));
-        MomentDynamicAndUserVo dynamicAndUserVo = momentDynamicMapper.queryById(dId);
+        MomentDynamicAndUserVo dynamicAndUserVo = momentDynamicMapper.queryById(dynamicId);
         // 动态可见范围：O-自己可见，F-粉丝可见，A-所有人可见，C-亲密关系可见
         if ((!dynamicAndUserVo.getAuthority().equals("A") && Objects.isNull(user)) || (!dynamicAndUserVo.getAuthority().equals("A") && !user.getUserId().equals(dynamicAndUserVo.getUserId()))) {
-            throw new BizException("非法请求，本开发者劝你善良");
+            throw new BizException("无权操作");
         }
-        List<MomentDiscussAndUserVo> items = momentDiscussMapper.queryByDynamicId(dId);
+        List<MomentDiscussAndUserVo> items = momentDiscussMapper.queryByDynamicId(dynamicId);
         List<MomentDiscussAndUserVo> collect_A = items.stream().filter(item -> item.getLevelType().equals(1)).collect(Collectors.toList());
         List<MomentDiscussAndUserVo> collect_B = items.stream().filter(item -> item.getLevelType().equals(2)).collect(Collectors.toList());
         collect_A.forEach(item -> item.setMomentDiscussAndUserVos(collect_B.stream().filter(it -> it.getLevelId().equals(item.getId())).collect(Collectors.toList())));
@@ -109,13 +105,17 @@ public class MomentDiscussServiceImpl implements MomentDiscussService {
     }
 
     /**
-     * 通过主键删除数据
-     *
-     * @param id 主键
-     * @return 是否成功
-     */
+     * @description: 通过主键删除数据
+     * @date: 2021/12/25 10:50
+     * @codes: 扁鹊
+     **/
     @Override
-    public boolean deleteById(Integer id) {
-        return this.momentDiscussMapper.deleteById(id) > 0;
+    public boolean deleteById(String id) {
+        MomentDiscuss discuss = momentDiscussMapper.queryById(id);
+        String userId = saTokenConfig.getUser().getUserId();
+        if (!Objects.equals(userId, discuss.getUserId())) {
+            throw new BizException("无权操作");
+        }
+        return momentDiscussMapper.deleteById(id, discuss.getLevelType()) >= 1;
     }
 }

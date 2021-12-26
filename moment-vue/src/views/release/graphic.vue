@@ -168,10 +168,9 @@
     },
     methods: {
       init() {
-        var _t = this;
-        var vanToast = Toast.loading({
+        const _t = this;
+        const vanToast = Toast.loading({
           duration: 1000,
-          overlay: true,
           message: '加载中...',
           forbidClick: true,
         });
@@ -186,15 +185,15 @@
 
       // 文件选择完毕后
       afterRead(file) {
-        var _t = this;
+        const _t = this;
         file.status = 'uploading';
         file.message = '上传中...';
-        var formData = new FormData();
+        const formData = new FormData();
         formData.append("file",file.file);
         // 上传图片
         uploadFile(formData, 'P').then(res => {
           if (res.success) {
-            var urls = res.data;
+            const urls = res.data;
             _t.form.pictureData.push(urls[0]);
             file.status = 'done';
             file.message = '上传成功';
@@ -231,7 +230,6 @@
         this.fileList.splice(detail.index,1);
         this.form.pictureData.splice(detail.index,1)
       },
-
       // 发布动态
       addDynamic() {
         var _t = this;
@@ -279,7 +277,7 @@
 
       // 标签保存
       focus() {
-        var _t = this;
+        const _t = this;
         if (_t.tags.length === 0) {
           Toast('您忘记选择标签了...');
           return false;
@@ -288,8 +286,8 @@
           Toast('您选择的标签太多了，装不下了...');
           return false;
         }
-        var tags = _t.tags;
-        var label = [];
+        const tags = _t.tags;
+        const label = [];
         for (let i in tags) {
           label.push('#' + tags[i].text)
         }
@@ -317,7 +315,6 @@
       onCancel() {
         this.authorityShow = false
       },
-
       onClickLeft() {
         this.$router.push(this.oldUrl);
       },
@@ -327,7 +324,7 @@
 
       // 获取设备宽度 - 图片宽度
       deviceWidth() {
-        var innerWidth = window.innerWidth;
+        const innerWidth = window.innerWidth;
         return (innerWidth - 44) / 3;
       },
     },

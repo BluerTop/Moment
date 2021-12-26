@@ -31,60 +31,24 @@ public class MomentDiscussController {
     @Resource
     private MomentDiscussService momentDiscussService;
 
-    /**
-     * @description: 发布留言
-     * @date: 2021/12/5 18:15
-     * codes: 扁鹊
-     **/
     @SaCheckLogin
     @ApiOperation("发布留言")
     @PostMapping("/add")
     public MomentDiscuss add(@RequestBody MomentDiscussDto momentDiscussDto) {
-        return this.momentDiscussService.insert(momentDiscussDto);
+        return momentDiscussService.insert(momentDiscussDto);
     }
 
-    /**
-     * @description: 根据动态id获取所有留言
-     * @date: 2021/12/5 19:25
-     * codes: 扁鹊
-     **/
-    @ApiOperation("根据动态id获取所有留言")
-    @GetMapping("/getInfos/{dynamicId}")
-    public List<MomentDiscussAndUserVo> getInfos(@PathVariable("dynamicId") String dynamicId) {
-        return this.momentDiscussService.getInfos(dynamicId);
+    @ApiOperation("动态所有留言")
+    @GetMapping("/getInfos")
+    public List<MomentDiscussAndUserVo> getInfos(@RequestParam("dynamicId") String dynamicId) {
+        return momentDiscussService.getInfos(dynamicId);
     }
 
-    /**
-     * 通过主键查询单条数据
-     *
-     * @param id 主键
-     * @return 单条数据
-     */
-    @GetMapping("{id}")
-    public ResponseEntity<MomentDiscuss> queryById(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(this.momentDiscussService.queryById(id));
-    }
-
-    /**
-     * 编辑数据
-     *
-     * @param momentDiscuss 实体
-     * @return 编辑结果
-     */
-    @PutMapping
-    public ResponseEntity<MomentDiscuss> edit(MomentDiscuss momentDiscuss) {
-        return ResponseEntity.ok(this.momentDiscussService.update(momentDiscuss));
-    }
-
-    /**
-     * 删除数据
-     *
-     * @param id 主键
-     * @return 删除是否成功
-     */
-    @DeleteMapping
-    public ResponseEntity<Boolean> deleteById(Integer id) {
-        return ResponseEntity.ok(this.momentDiscussService.deleteById(id));
+    @SaCheckLogin
+    @ApiOperation("删除留言")
+    @GetMapping("/del")
+    public boolean del(@RequestParam("id") String id){
+        return momentDiscussService.deleteById(id);
     }
 
 }

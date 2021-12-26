@@ -22,7 +22,7 @@ public interface MomentDiscussService {
      * @param id 主键
      * @return 实例对象
      */
-    MomentDiscuss queryById(Integer id);
+    MomentDiscuss queryById(String id);
 
     /**
      * @description: 根据动态id获取所有留言
@@ -47,11 +47,10 @@ public interface MomentDiscussService {
     MomentDiscuss update(MomentDiscuss momentDiscuss);
 
     /**
-     * 通过主键删除数据
-     *
-     * @param id 主键
-     * @return 是否成功
-     */
-    boolean deleteById(Integer id);
+    * @description: 通过主键删除数据
+    * @date: 2021/12/25 10:49
+    * @codes: 扁鹊
+    **/
+    boolean deleteById(String id);
 
 }

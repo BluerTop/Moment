@@ -35,7 +35,7 @@ public interface MomentAccountMapper {
      * @date: 2021/11/27 23:12
      * codes: 扁鹊
      **/
-    MomentAccount queryById(Integer accountId);
+    MomentAccount queryById(String accountId);
 
     /**
      * 查询指定行数据

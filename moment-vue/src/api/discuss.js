@@ -14,10 +14,22 @@ export function addDiscuss(data) {
   })
 }
 
-// 根据动态id获取所有留言
+// 动态所有留言
 export function getDiscussInfos(dynamicId) {
   return request({
-    url: '/momentDiscuss/getInfos/'+dynamicId,
+    url: '/momentDiscuss/getInfos?dynamicId=' + dynamicId,
+    method: 'get',
+    headers: {
+      'moment-token': getTokenValue(),
+      'Content-Type': "application/json;charset=utf-8",
+    },
+  })
+}
+
+// 删除留言
+export function delDiscuss(dynamicId) {
+  return request({
+    url: '/momentDiscuss/del?id=' + dynamicId,
     method: 'get',
     headers: {
       'moment-token': getTokenValue(),

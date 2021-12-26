@@ -18,7 +18,7 @@ public interface MomentAccountService {
      * @param accountId 主键
      * @return 实例对象
      */
-    MomentAccount queryById(Integer accountId);
+    MomentAccount queryById(String accountId);
 
     /**
      * @description: 通过用户条件查询单条数据
@@ -26,15 +26,6 @@ public interface MomentAccountService {
      * codes: 扁鹊
      **/
     MomentAccount queryByCondition(MomentAccount momentAccount);
-
-    /**
-     * 分页查询
-     *
-     * @param momentAccount 筛选条件
-     * @param pageRequest   分页对象
-     * @return 查询结果
-     */
-    Page<MomentAccount> queryByPage(MomentAccount momentAccount, PageRequest pageRequest);
 
     /**
     * @description: 新增数据
@@ -49,13 +40,5 @@ public interface MomentAccountService {
     * codes: 扁鹊
     **/
     MomentAccount update(MomentAccount momentAccount);
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param accountId 主键
-     * @return 是否成功
-     */
-    boolean deleteById(Integer accountId);
 
 }

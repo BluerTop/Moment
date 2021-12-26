@@ -19,7 +19,7 @@ public class MomentDiscuss implements Serializable {
     /**
      * 主键
      */
-    private Integer id;
+    private String id;
     /**
      * 留言内容
      */
@@ -31,7 +31,7 @@ public class MomentDiscuss implements Serializable {
     /**
      * 上级留言id（二级留言适用）
      */
-    private Integer levelId;
+    private String levelId;
     /**
      * 所属动态id
      */
@@ -39,7 +39,7 @@ public class MomentDiscuss implements Serializable {
     /**
      * 所属用户id
      */
-    private Integer userId;
+    private String userId;
     /**
      * 是否是作者：M-是，F-不是
      */

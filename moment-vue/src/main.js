@@ -13,7 +13,9 @@ import VueTagsInput from '@johmun/vue-tags-input';
 import AliPlayer from './components/AliPlayer/index';
 import Nav from './components/NavigationBar/index';
 import unsplash from './components/unsplash/index';
+import vueTouch from 'kim-vue-touch'
 
+Vue.use(vueTouch)
 Vue.config.productionTip = false;
 Vue.use(Vant);
 Vue.use(ElementUI);

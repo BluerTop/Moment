@@ -7,7 +7,6 @@
       />
     </div>
 
-    <Nav active="/msg"/>
   </div>
 </template>
 

@@ -16,7 +16,7 @@ public class MomentSms implements Serializable {
     /**
      * 阿里云id
      */
-    private Integer aliId;
+    private String aliId;
     /**
      * 访问密钥 ID
      */

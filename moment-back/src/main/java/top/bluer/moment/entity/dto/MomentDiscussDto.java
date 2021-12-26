@@ -25,7 +25,7 @@ public class MomentDiscussDto {
     /**
      * 上级留言id（二级留言适用）
      */
-    private Integer levelId;
+    private String levelId;
     /**
      * 所属动态id
      */

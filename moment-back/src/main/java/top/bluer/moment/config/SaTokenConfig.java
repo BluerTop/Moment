@@ -59,16 +59,6 @@ public class SaTokenConfig implements WebMvcConfigurer {
     public MomentAccount getAccount() {
         String loginId = StpUtil.getLoginIdAsString();
         String loginDevice = StpUtil.getLoginDevice();
-//        String accountInfo = TemplateUtil.processTemplate(ACCOUNT_INFO, new HashMap<String, Object>(1) {{
-//            put("account", loginId);
-//        }});
-//        MomentAccount momentAccount = momentRedis.get(accountInfo);
-//        if (!Objects.isNull(momentAccount)) {
-//            return momentAccount;
-//        }
-//        momentAccount = MomentAccount.builder().accountPhone(loginDevice.equals("P") ? loginId : null).accountMail(loginDevice.equals("M") ? loginId : null).build();
-//        momentAccount = momentAccountService.queryByCondition(momentAccount);
-//        momentRedis.set(CachePackage.builder().key(accountInfo).value(momentAccount).expire(Duration.ofMinutes(30L)).build());
         MomentAccount momentAccount = MomentAccount.builder().accountPhone(loginDevice.equals("P") ? loginId : null).accountMail(loginDevice.equals("M") ? loginId : null).build();
         momentAccount = momentAccountService.queryByCondition(momentAccount);
         return momentAccount;
@@ -80,15 +70,7 @@ public class SaTokenConfig implements WebMvcConfigurer {
      * codes: 扁鹊
      **/
     public MomentUser getUser() {
-        Integer userId = getAccount().getUserId();
-//        String userInfo = TemplateUtil.processTemplate(USER_INFO, new HashMap<String, Object>(1) {{
-//            put("userId", userId);
-//        }});
-//        MomentUser momentUser = momentRedis.get(userInfo);
-//        if (!Objects.isNull(momentUser)){
-//            return momentUser;
-//        }
-//        momentRedis.set(CachePackage.builder().key(userInfo).value(momentUser).expire(Duration.ofMinutes(30L)).build());
+        String userId = getAccount().getUserId();
         return momentUserService.queryById(userId);
     }
 }

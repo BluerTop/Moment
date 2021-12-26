@@ -29,8 +29,8 @@ public class MomentOtherController {
 
     @SaCheckLogin
     @ApiOperation("通用上传文件接口")
-    @PostMapping("/uploadFile/{describe}")
-    public ArrayList<String> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("describe") String describe) {
+    @PostMapping("/uploadFile")
+    public ArrayList<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("describe") String describe) {
         return momentOtherService.uploadFile(file, describe);
     }
 
@@ -42,8 +42,8 @@ public class MomentOtherController {
     }
 
     @ApiOperation("获取unsplash随机图片")
-    @GetMapping("/photos/{index}")
-    public ArrayList<MomentUnsplashListVo> photos(@PathVariable("index") String index) {
+    @GetMapping("/photos")
+    public ArrayList<MomentUnsplashListVo> photos(@RequestParam("index") String index) {
         return momentOtherService.photos(index);
     }
 }

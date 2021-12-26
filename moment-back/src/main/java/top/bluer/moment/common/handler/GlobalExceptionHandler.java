@@ -1,6 +1,7 @@
 package top.bluer.moment.common.handler;
 
 import cn.dev33.satoken.exception.NotLoginException;
+import io.lettuce.core.RedisCommandTimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -58,6 +59,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(QueryTimeoutException.class)
     public ErrorResult queryTimeoutException(QueryTimeoutException e) {
+        log.error(e.getMessage());
+        return ErrorResult.error(RedisCommandTimedOut);
+    }
+
+    /**
+     * QueryTimeoutException
+     */
+    @ExceptionHandler(RedisCommandTimeoutException.class)
+    public ErrorResult queryTimeoutException(RedisCommandTimeoutException e) {
         log.error(e.getMessage());
         return ErrorResult.error(RedisCommandTimedOut);
     }

@@ -70,17 +70,17 @@ public class MomentAuthServiceImpl implements MomentAuthService {
         switch (loginType) {
             case "PC": {
                 MomentAccount momentAccount = this.loginPC(loginParamsDto);
-                StpUtil.login(momentAccount.getAccountPhone(), true);
+                StpUtil.login(momentAccount.getAccountPhone(), SaLoginModel.create().setIsLastingCookie(true).setDevice("P"));
                 break;
             }
             case "PP": {
                 MomentAccount momentAccount = this.loginPP(loginParamsDto);
-                StpUtil.login(momentAccount.getAccountPhone(), true);
+                StpUtil.login(momentAccount.getAccountPhone(), SaLoginModel.create().setIsLastingCookie(true).setDevice("P"));
                 break;
             }
             case "MP": {
                 MomentAccount momentAccount = this.loginMP(loginParamsDto);
-                StpUtil.login(momentAccount.getAccountMail(), true);
+                StpUtil.login(momentAccount.getAccountMail(), SaLoginModel.create().setIsLastingCookie(true).setDevice("M"));
                 break;
             }
             default:
@@ -118,7 +118,9 @@ public class MomentAuthServiceImpl implements MomentAuthService {
         MomentAccount momentAccount = momentAccountService.queryByCondition(MomentAccount.builder().accountPhone(loginParamsDto.getAccountPhone()).build());
         if (Objects.isNull(momentAccount)) {
             // 未注册
-            MomentUser momentUser = momentUserService.insert(MomentUser.builder()
+            MomentUser momentUser = momentUserService.insert(MomentUser
+                    .builder()
+                    .userId(RandomUtil.getRanId())
                     .userName("片刻" + RandomUtil.getRandomString(6))
                     .userGender("K")
                     .userBirthday(new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
@@ -126,7 +128,9 @@ public class MomentAuthServiceImpl implements MomentAuthService {
                     .userDate(new Date())
                     .userStatus("E")
                     .build());
-            momentAccount = momentAccountService.insert(MomentAccount.builder()
+            momentAccount = momentAccountService.insert(MomentAccount
+                    .builder()
+                    .accountId(RandomUtil.getRanId())
                     .accountType("P")
                     .accountPhone(loginParamsDto.getAccountPhone())
                     .accountPassword(jasyptUtil.encrypt(RandomUtil.getRandomString(10)))

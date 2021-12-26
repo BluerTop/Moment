@@ -72,11 +72,10 @@
           <!--图片数据-->
           <div style="padding-bottom: 20px">
             <el-image fit="cover" v-bind:style="{height : item.height,'background-color' : item.color}"
-                      style="height:200px ; width: 100%;border-radius: 10px;"
+                      style="width: 100%;border-radius: 10px;"
                       :src="item.pictureData" lazy>
               <div slot="placeholder" class="image-slot"
                    style="height: 300px;width: 100%;color: darkgrey;text-align: center;line-height: 300px">
-                <van-loading size="50"/>
               </div>
               <div slot="error" class="image-slot"
                    style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
@@ -167,7 +166,6 @@ export default {
     // 获取unsplash随机图片
     getPhotos() {
       const vanToast = Toast.loading({
-        overlay: true,
         forbidClick: true,
         message: 'Loading...'
       });
@@ -188,7 +186,6 @@ export default {
     // unsplash下载显示
     unsplashDowTop(item) {
       const vanToast = Toast.loading({
-        overlay: true,
         forbidClick: true,
         message: 'Loading...'
       });
@@ -208,7 +205,6 @@ export default {
     // unsplash下载
     unsplashDow(action, index) {
       const vanToast = Toast.loading({
-        overlay: true,
         forbidClick: true,
         message: 'Loading...'
       });

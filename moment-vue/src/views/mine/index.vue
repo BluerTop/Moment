@@ -3,6 +3,8 @@
     <div>
       <van-nav-bar
         :title="momentUser.userName ?  momentUser.userName : '未登录'"
+        :placeholder="true"
+        :fixed="true"
         @click-right="onClickRight">
         <template #right>
           <van-icon name="setting-o" size="18px" color="black"/>
@@ -70,14 +72,12 @@
         </div>
     </div>
 
-    <Nav active="/mine"/>
   </div>
 </template>
 
 <script>
   import {delMomentUser, delTokenValue} from "../../utils/auth";
   import {userInfo} from "../../api/user";
-  import {Toast} from "vant";
 
   import preventBack from 'vue-prevent-browser-back';
 
@@ -104,6 +104,7 @@
     },
     methods: {
       init() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0
         this.getMomentUserSer()
       },
 

@@ -1,9 +1,10 @@
 <template>
   <div>
-  <van-nav-bar
-    title="发现"
-    :placeholder="true"
-  />
+    <van-nav-bar
+      title="发现"
+      :placeholder="true"
+      :fixed="true"
+    />
 
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh" style="padding-bottom: 150px;">
       <van-list
@@ -18,7 +19,7 @@
         <div style="margin-top: 10px">
           <div style="width: 44%;margin: 0 2% 10px 4%;float: left" ref="itemsa">
             <div v-for="(item,index) in itemsa" :key="index">
-              <div @click="toDetails(item.sid)">
+              <div @click="toDetails(item.id)">
                 <!--图片-->
                 <div v-show="item.type === 'P' || item.type === 'G'">
                   <div v-show="item.pictureDataListSize !== 1">
@@ -26,20 +27,24 @@
                       <el-image fit="cover" v-show="item.pictureDataType"
                                 style="width: 100%;height: 200px; border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                                 :src="item.pictureData">
-                        <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="placeholder" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载中...
                         </div>
-                        <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="error" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载失败
                         </div>
                       </el-image>
                       <el-image fit="cover" v-show="!item.pictureDataType"
                                 style="width: 100%;height: 200px;border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                                 :src="item.pictureData+'?x-oss-process=image/resize,w_300/quality,Q_50/interlace,1'">
-                        <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="placeholder" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载中...
                         </div>
-                        <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="error" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载失败
                         </div>
                       </el-image>
@@ -49,20 +54,24 @@
                     <el-image fit="cover" v-show="item.pictureDataType"
                               style="width: 100%;height: 200px; border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                               :src="item.pictureData">
-                      <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="placeholder" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载中...
                       </div>
-                      <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="error" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载失败
                       </div>
                     </el-image>
                     <el-image fit="cover" v-show="!item.pictureDataType"
                               style="width: 100%;height: 200px;border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                               :src="item.pictureData+'?x-oss-process=image/resize,w_300/quality,Q_50/interlace,1'">
-                      <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="placeholder" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载中...
                       </div>
-                      <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="error" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载失败
                       </div>
                     </el-image>
@@ -80,7 +89,7 @@
                 <!--标签-->
                 <div style="display: flex;width: 100%;margin-top: 5px">
                   <span style="font-size: 10px;margin: 0 3px;color: #82848a"
-                        v-for="(lable) in item.labelList">{{lable}}</span>
+                        v-for="(lable) in item.labelList">{{ lable }}</span>
                 </div>
               </div>
               <!--个人信息-->
@@ -90,10 +99,11 @@
                           :src="item.userAvatar + '?x-oss-process=image/resize,w_300/quality,Q_50/interlace,1'"/>
                 <div>
                           <span style="font-size: 10px;color: #82848a;margin-left: 5px"
-                                class="van-multi-ellipsis--l1">{{item.userName}}</span>
+                                class="van-multi-ellipsis--l1">{{ item.userName }}</span>
                   <!--点赞-->
                   <van-button icon="like-o" type="default" size="small"
-                              style="border: none;color: #82848a;margin-top: -7px; float: right;width: 50px" @click="start">2.5k
+                              style="border: none;color: #82848a;margin-top: -7px; float: right;width: 50px"
+                              @click="start">2.5k
                   </van-button>
                 </div>
               </div>
@@ -101,7 +111,7 @@
           </div>
           <div style="width: 44%;margin: 0 4% 10px 2%;float: right" ref="itemsb">
             <div v-for="(item,index) in itemsb" :key="index">
-              <div @click="toDetails(item.sid)">
+              <div @click="toDetails(item.id)">
                 <!--图片-->
                 <div v-show="item.type === 'P' || item.type === 'G'">
                   <div v-show="item.pictureDataListSize !== 1">
@@ -109,20 +119,24 @@
                       <el-image fit="cover" v-show="item.pictureDataType"
                                 style="width: 100%;height: 200px; border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                                 :src="item.pictureData">
-                        <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="placeholder" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载中...
                         </div>
-                        <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="error" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载失败
                         </div>
                       </el-image>
                       <el-image fit="cover" v-show="!item.pictureDataType"
                                 style="width: 100%;height: 200px;border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                                 :src="item.pictureData+'?x-oss-process=image/resize,w_300/quality,Q_50/interlace,1'">
-                        <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="placeholder" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载中...
                         </div>
-                        <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                        <div slot="error" class="image-slot"
+                             style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                           加载失败
                         </div>
                       </el-image>
@@ -132,20 +146,24 @@
                     <el-image fit="cover" v-show="item.pictureDataType"
                               style="width: 100%;height: 200px; border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                               :src="item.pictureData">
-                      <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="placeholder" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载中...
                       </div>
-                      <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="error" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载失败
                       </div>
                     </el-image>
                     <el-image fit="cover" v-show="!item.pictureDataType"
                               style="width: 100%;height: 200px;border-radius: 10px;box-shadow: 5px 5px 5px rgba(0,0,0,.1);"
                               :src="item.pictureData+'?x-oss-process=image/resize,w_300/quality,Q_50/interlace,1'">
-                      <div slot="placeholder" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="placeholder" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载中...
                       </div>
-                      <div slot="error" class="image-slot" style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
+                      <div slot="error" class="image-slot"
+                           style="height: 200px;width: 100%;color: darkgrey;text-align: center;line-height: 200px">
                         加载失败
                       </div>
                     </el-image>
@@ -163,7 +181,7 @@
                 <!--标签-->
                 <div style="display: flex;width: 100%;margin-top: 5px">
                   <span style="font-size: 10px;margin: 0 3px;color: #82848a"
-                        v-for="(lable) in item.labelList">{{lable}}</span>
+                        v-for="(lable) in item.labelList">{{ lable }}</span>
                 </div>
               </div>
               <!--个人信息-->
@@ -173,10 +191,11 @@
                           :src="item.userAvatar + '?x-oss-process=image/resize,w_300/quality,Q_50/interlace,1'"/>
                 <div>
                           <span style="font-size: 10px;color: #82848a;margin-left: 5px"
-                                class="van-multi-ellipsis--l1">{{item.userName}}</span>
+                                class="van-multi-ellipsis--l1">{{ item.userName }}</span>
                   <!--点赞-->
                   <van-button icon="like-o" type="default" size="small"
-                              style="border: none;color: #82848a;margin-top: -7px; float: right;width: 50px" @click="start">2.5k
+                              style="border: none;color: #82848a;margin-top: -7px; float: right;width: 50px"
+                              @click="start">2.5k
                   </van-button>
                 </div>
               </div>
@@ -185,8 +204,6 @@
         </div>
       </van-list>
     </van-pull-refresh>
-
-    <Nav active="/discover"/>
 
   </div>
 </template>
@@ -226,9 +243,11 @@ export default {
   mounted() {
     this.init()
   },
+  activated: function () {
+  },
   methods: {
     init() {
-      var vanToast = Toast.loading({
+      const vanToast = Toast.loading({
         overlay: true,
         forbidClick: true,
         message: '加载中...',
@@ -248,7 +267,7 @@ export default {
       const itemsb = this.$refs.itemsb.clientHeight;
       pages(_t.pages.page, _t.pages.size).then(res => {
         if (res.success) {
-          var data = res.data;
+          const data = res.data;
           if (data.size === 0) {
             this.finished = true;
           } else {
@@ -278,7 +297,7 @@ export default {
     },
     // 查看详情
     toDetails(id) {
-      this.$router.push('/details/' + id)
+      this.$router.push('/details?id=' + id)
     },
     toIndex() {
       this.$router.push('/')

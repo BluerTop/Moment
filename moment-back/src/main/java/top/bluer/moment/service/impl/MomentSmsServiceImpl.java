@@ -180,7 +180,7 @@ public class MomentSmsServiceImpl implements MomentSmsService {
      * @return 实例对象
      */
     @Override
-    public MomentSms queryById(Integer aliId) {
+    public MomentSms queryById(String aliId) {
         return momentSmsMapper.queryById(aliId);
     }
 
@@ -228,7 +228,7 @@ public class MomentSmsServiceImpl implements MomentSmsService {
      * @return 是否成功
      */
     @Override
-    public boolean deleteById(Integer aliId) {
+    public boolean deleteById(String aliId) {
         return momentSmsMapper.deleteById(aliId) > 0;
     }
 }

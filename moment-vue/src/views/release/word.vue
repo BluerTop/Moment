@@ -144,13 +144,12 @@
     },
     methods: {
       init() {
-        var vanToast = Toast.loading({
+        const vanToast = Toast.loading({
           duration: 1000,
-          overlay: true,
           forbidClick: true,
           message: '加载中...',
         });
-        var _t = this;
+        const _t = this;
         userInfo().then(res => {
           if (res.success) {
             _t.momentUser = res.data;
@@ -161,7 +160,7 @@
       },
       // 发布动态
       addDynamic() {
-        var _t = this;
+        const _t = this;
         if (_t.form.textData === '') {
           Toast('说点东西呗...');
           return false;
@@ -171,7 +170,7 @@
           Toast('您忘记选择标签了...');
           return false;
         }
-        var vanToast = Toast.loading({
+        const vanToast = Toast.loading({
           message: '加载中...',
           forbidClick: true,
         });
@@ -201,7 +200,7 @@
 
       // 标签保存
       focus() {
-        var _t = this;
+        const _t = this;
         if (_t.tags.length === 0) {
           Toast('您忘记选择标签了...');
           return false;
@@ -210,8 +209,8 @@
           Toast('您选择的标签太多了，装不下了...');
           return false;
         }
-        var tags = _t.tags;
-        var label = [];
+        const tags = _t.tags;
+        const label = [];
         for (let i in tags) {
           label.push('#' + tags[i].text)
         }

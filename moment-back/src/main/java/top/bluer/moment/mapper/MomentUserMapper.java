@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import top.bluer.moment.entity.MomentUser;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
+import top.bluer.moment.entity.vo.MomentUserInfoVo;
 
 import java.util.List;
 
@@ -19,36 +20,45 @@ public interface MomentUserMapper {
     List<MomentUser> selec();
 
     /**
-     * 通过ID查询单条数据
-     *
-     * @param userId 主键
-     * @return 实例对象
-     */
-    MomentUser queryById(Integer userId);
+     * @description: 通过ID查询单条数据
+     * @date: 2021/12/25 12:01
+     * @codes: 扁鹊
+     **/
+    MomentUser queryById(String userId);
 
     /**
-     * 查询指定行数据
-     *
-     * @param momentUser 查询条件
-     * @param pageable   分页对象
-     * @return 对象列表
-     */
-    List<MomentUser> queryAllByLimit(MomentUser momentUser, @Param("pageable") Pageable pageable);
+     * @description: 推荐用户列表
+     * @date: 2021/12/25 13:47
+     * @codes: 扁鹊
+     **/
+    List<MomentUserInfoVo> recommend(@Param("item") MomentUser momentUser);
 
     /**
-     * 统计总行数
-     *
-     * @param momentUser 查询条件
-     * @return 总行数
-     */
+     * @description: 动态点赞用户列表
+     * @date: 2021/12/25 13:47
+     * @codes: 扁鹊
+     **/
+    List<MomentUserInfoVo> likeList(@Param("ids") List<String> ids);
+
+    /**
+     * @description: 查询指定行数据
+     * @date: 2021/12/25 12:20
+     * @codes: 扁鹊
+     **/
+    List<MomentUserInfoVo> queryAllByLimit(@Param("item") MomentUser momentUser);
+
+    /**
+     * @description: 统计总行数
+     * @date: 2021/12/25 12:25
+     * @codes: 扁鹊
+     **/
     long count(MomentUser momentUser);
 
     /**
-     * 新增数据
-     *
-     * @param momentUser 实例对象
-     * @return 影响行数
-     */
+     * @description: 新增数据
+     * @date: 2021/12/23 18:55
+     * @codes: 扁鹊
+     **/
     int insert(MomentUser momentUser);
 
     /**
@@ -82,7 +92,6 @@ public interface MomentUserMapper {
      * @param userId 主键
      * @return 影响行数
      */
-    int deleteById(Integer userId);
-
+    int deleteById(String userId);
 }
 

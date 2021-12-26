@@ -8,20 +8,25 @@ import com.github.pagehelper.PageInfo;
 import top.bluer.moment.common.exception.BizException;
 import top.bluer.moment.config.SaTokenConfig;
 import top.bluer.moment.entity.MomentDynamic;
+import top.bluer.moment.entity.MomentFollow;
+import top.bluer.moment.entity.MomentLikes;
 import top.bluer.moment.entity.MomentUser;
 import top.bluer.moment.entity.vo.MomentDynamicAndUserVo;
 import top.bluer.moment.entity.dto.MomentDynamicDto;
 import top.bluer.moment.mapper.MomentDynamicMapper;
+import top.bluer.moment.mapper.MomentFollowMapper;
+import top.bluer.moment.mapper.MomentLikesMapper;
 import top.bluer.moment.service.MomentDynamicService;
 import org.springframework.stereotype.Service;
 import cn.hutool.core.bean.BeanUtil;
 import top.bluer.moment.utils.HttpRequestUtil;
-import top.bluer.moment.utils.JasyptUtil;
 import top.bluer.moment.utils.ParallelUtil;
+import top.bluer.moment.utils.RandomUtil;
 
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 片刻动态表(MomentDynamic)表服务实现类
@@ -33,15 +38,16 @@ import java.util.List;
 public class MomentDynamicServiceImpl implements MomentDynamicService {
     @Resource
     private MomentDynamicMapper momentDynamicMapper;
-
     @Resource
     private SaTokenConfig saTokenConfig;
-
     @Resource
-    private JasyptUtil jasyptUtil;
-
+    private MomentFollowMapper momentFollowMapper;
     @Resource
     private HttpRequestUtil httpRequestUtil;
+    @Resource
+    private MomentLikesMapper MomentLikesMapper;
+    @Resource
+    private MomentLikesMapper momentLikesMapper;
 
     /**
      * @description: 发布动态
@@ -52,6 +58,7 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
     public MomentDynamic insert(MomentDynamicDto momentDynamicDto) {
         MomentDynamic momentDynamic = MomentDynamic.builder().build();
         BeanUtil.copyProperties(momentDynamicDto, momentDynamic);
+        momentDynamic.setId(RandomUtil.getRanId());
         // 创建时间
         momentDynamic.setCreatTime(new Date());
         momentDynamic.setStatus("M");
@@ -60,25 +67,33 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
     }
 
     /**
-     * @description: 根据id获取单条动态信息
+     * @description: 单条动态信息
      * @date: 2021/12/3 17:38
      * codes: 扁鹊
      **/
     @Override
     public MomentDynamicAndUserVo queryById(String id) {
-        MomentDynamicAndUserVo item = this.momentDynamicMapper.queryById(Integer.valueOf(jasyptUtil.decryptUid(id)));
+        MomentDynamicAndUserVo item = momentDynamicMapper.queryById(id);
         // 可见范围：O-自己可见，F-粉丝可见，A-所有人可见，C-亲密关系可见
+        MomentUser user = saTokenConfig.getUser();
+        MomentLikes info = momentLikesMapper.getInfo(MomentLikes.builder().dynamicId(id).userId(user.getUserId()).status(0).build());
+        item.setLikeStatus(Objects.nonNull(info));
+        if (StpUtil.isLogin()) {
+            String userId = saTokenConfig.getUser().getUserId();
+            item.setFollowStatus(momentFollowMapper.count(MomentFollow.builder().followersId(userId).followedId(item.getUserId()).status(0).build()));
+        } else {
+            item.setFollowStatus(0);
+        }
         if (item.getAuthority().equals("A")) {
             return dataProcessing(item);
         }
         if (Objects.isNull(StpUtil.getLoginIdDefaultNull())) {
-            throw new BizException("非法请求，本开发者劝你善良");
+            throw new BizException("无权操作");
         }
-        MomentUser user = saTokenConfig.getUser();
         if (Objects.equals(user.getUserId(), item.getUserId())) {
             return dataProcessing(item);
         }
-        throw new BizException("非法请求，本开发者劝你善良");
+        throw new BizException("无权操作");
     }
 
     /**
@@ -97,21 +112,51 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
     }
 
     /**
-     * @description: 查询我的动态列表
+     * @description: 我的动态列表
      * @date: 2021/12/3 17:23
      * codes: 扁鹊
      **/
     @Override
-    public List<MomentDynamicAndUserVo> queryByMy(String index) {
-        Integer userId = saTokenConfig.getUser().getUserId();
-        PageHelper.startPage(Integer.parseInt(index), 10);
+    public List<MomentDynamicAndUserVo> queryByMy(Integer index) {
+        String userId = saTokenConfig.getUser().getUserId();
+        PageHelper.startPage(index, 10);
         List<MomentDynamicAndUserVo> items = this.momentDynamicMapper.queryAllByLimit(MomentDynamic.builder().userId(userId).status("M").build());
         ArrayList<ParallelUtil.ParallelJob<MomentDynamicAndUserVo>> parallelJobs = new ArrayList<>();
-        items.forEach(item -> parallelJobs.add(new ParallelUtil.ParallelJob<MomentDynamicAndUserVo>().setFunction(()->dataProcessing(item))));
+        items.forEach(item -> parallelJobs.add(new ParallelUtil.ParallelJob<MomentDynamicAndUserVo>().setFunction(() -> dataProcessing(item))));
         ParallelUtil.execute(parallelJobs);
         ArrayList<MomentDynamicAndUserVo> list = new ArrayList<>();
         parallelJobs.forEach(item -> list.add(item.getResutl()));
+        list.forEach(item -> item.setFollowStatus(momentFollowMapper.count(MomentFollow.builder().followersId(userId).followedId(item.getUserId()).status(0).build())));
         return list;
+    }
+
+    /**
+     * @description: 我的关注动态列表
+     * @date: 2021/12/26 12:22
+     * @codes: 扁鹊
+     **/
+    @Override
+    public PageInfo<MomentDynamicAndUserVo> queryByMyFocus(Integer index) {
+        String userId = saTokenConfig.getUser().getUserId();
+        List<MomentFollow> list = momentFollowMapper.list(MomentFollow.builder().followersId(userId).status(0).build());
+        if (list.size() <= 0) {
+            return new PageInfo<>(new ArrayList<>());
+        }
+        List<String> collect = list.stream().map(MomentFollow::getFollowedId).collect(Collectors.toList());
+        PageHelper.startPage(index, 10);
+        List<MomentDynamicAndUserVo> items = momentDynamicMapper.queryByMyFocus(collect, new ArrayList<String>() {{
+            add("F");
+            add("A");
+        }}, "M");
+        PageInfo<MomentDynamicAndUserVo> pageInfo = new PageInfo<>(items);
+        ArrayList<ParallelUtil.ParallelJob<MomentDynamicAndUserVo>> parallelJobs = new ArrayList<>();
+        items.forEach(item -> parallelJobs.add(new ParallelUtil.ParallelJob<MomentDynamicAndUserVo>().setFunction(() -> dataProcessing(item))));
+        ParallelUtil.execute(parallelJobs);
+        List<MomentDynamicAndUserVo> finalItems = new ArrayList<>();
+        parallelJobs.forEach(item -> finalItems.add(item.getResutl()));
+        finalItems.forEach(item -> item.setFollowStatus(momentFollowMapper.count(MomentFollow.builder().followersId(userId).followedId(item.getUserId()).status(0).build())));
+        pageInfo.setList(finalItems);
+        return pageInfo;
     }
 
     /**
@@ -120,8 +165,6 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
      * codes: 扁鹊
      **/
     private MomentDynamicAndUserVo dataProcessing(MomentDynamicAndUserVo item) {
-        item.setSId(jasyptUtil.encryptUid(String.valueOf(item.getId())));
-        item.setId(null);
         String pictureData = item.getPictureData();
         if (Objects.nonNull(pictureData)) {
             ArrayList<String> list = JSONObject.parseObject(pictureData, ArrayList.class);
@@ -161,7 +204,8 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
             ArrayList<String> parse = JSONObject.parseObject(label, ArrayList.class);
             item.setLabelList(parse);
         }
-        item.setLikes(0);
+        int count = MomentLikesMapper.count(MomentLikes.builder().status(0).dynamicId(item.getId()).build());
+        item.setLikes(count);
         return item;
     }
 
@@ -186,6 +230,6 @@ public class MomentDynamicServiceImpl implements MomentDynamicService {
      **/
     @Override
     public boolean delOrRec(String id, String type) {
-        return this.momentDynamicMapper.delOrRec(Integer.valueOf(jasyptUtil.decryptUid(id)), type) > 0;
+        return momentDynamicMapper.delOrRec(id, type) > 0;
     }
 }

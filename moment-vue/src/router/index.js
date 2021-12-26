@@ -9,6 +9,7 @@ import Word from '../views/release/word'
 import Picture from '../views/release/picture'
 import Graphic from '../views/release/graphic'
 import Details from '../views/details/index'
+import Recommend from '../views/recommend/index'
 
 Vue.use(Router);
 // 解决重复点菜单报错问题
@@ -16,9 +17,8 @@ const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 };
-
 export default new Router({
-  mode:'history',
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -35,6 +35,15 @@ export default new Router({
       component: Discover,
       meta: {
         keepAlive: true,
+        scrollTop: 0,
+      }
+    },
+    {
+      path: '/recommend',
+      name: 'recommend',
+      component: Recommend,
+      meta: {
+        keepAlive: false,
         scrollTop: 0,
       }
     },
@@ -57,9 +66,12 @@ export default new Router({
       }
     },
     {
-      path: '/details/:id',
+      path: '/details',
       name: 'details',
       component: Details,
+      props: {
+        id : ''
+      },
       meta: {
         keepAlive: false,
         scrollTop: 0,

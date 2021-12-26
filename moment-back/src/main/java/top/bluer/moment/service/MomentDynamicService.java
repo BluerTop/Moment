@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import top.bluer.moment.entity.MomentDynamic;
 import top.bluer.moment.entity.vo.MomentDynamicAndUserVo;
 import top.bluer.moment.entity.dto.MomentDynamicDto;
+
 import java.util.List;
 
 /**
@@ -35,17 +36,24 @@ public interface MomentDynamicService {
     PageInfo<MomentDynamicAndUserVo> queryByPage(Integer page, Integer size);
 
     /**
-     * @description: 查询我的动态列表
+     * @description: 我的动态列表
      * @date: 2021/12/3 17:23
      * codes: 扁鹊
      **/
-    List<MomentDynamicAndUserVo> queryByMy(String index);
+    List<MomentDynamicAndUserVo> queryByMy(Integer index);
 
     /**
-    * @description: 根据id获取单条动态信息
-    * @date: 2021/12/3 17:38
-    * codes: 扁鹊
-    **/
+     * @description: 我的关注动态列表
+     * @date: 2021/12/26 12:21
+     * @codes: 扁鹊
+     **/
+    PageInfo<MomentDynamicAndUserVo> queryByMyFocus(Integer index);
+
+    /**
+     * @description: 单条动态信息
+     * @date: 2021/12/3 17:38
+     * codes: 扁鹊
+     **/
     MomentDynamicAndUserVo queryById(String id);
 
     /**

@@ -1,6 +1,12 @@
 package top.bluer.moment.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import top.bluer.moment.config.SaTokenConfig;
+import top.bluer.moment.entity.MomentFollow;
 import top.bluer.moment.entity.MomentUser;
+import top.bluer.moment.entity.vo.MomentUserInfoVo;
+import top.bluer.moment.mapper.MomentFollowMapper;
 import top.bluer.moment.mapper.MomentUserMapper;
 import top.bluer.moment.service.MomentUserService;
 import org.springframework.stereotype.Service;
@@ -9,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 用户表(MomentUser)表服务实现类
@@ -20,40 +27,46 @@ import javax.annotation.Resource;
 public class MomentUserServiceImpl implements MomentUserService {
     @Resource
     private MomentUserMapper momentUserMapper;
+    @Resource
+    private SaTokenConfig saTokenConfig;
+    @Resource
+    private MomentFollowMapper momentFollowMapper;
 
     /**
-     * 通过ID查询单条数据
-     *
-     * @param userId 主键
-     * @return 实例对象
-     */
+     * @description: 通过ID查询单条数据
+     * @date: 2021/12/25 12:01
+     * @codes: 扁鹊
+     **/
     @Override
-    public MomentUser queryById(Integer userId) {
-        return this.momentUserMapper.queryById(userId);
+    public MomentUser queryById(String userId) {
+        return momentUserMapper.queryById(userId);
     }
 
     /**
-     * 分页查询
-     *
-     * @param momentUser  筛选条件
-     * @param pageRequest 分页对象
-     * @return 查询结果
-     */
+     * @description: 推荐用户列表
+     * @date: 2021/12/25 12:19
+     * @codes: 扁鹊
+     **/
     @Override
-    public Page<MomentUser> queryByPage(MomentUser momentUser, PageRequest pageRequest) {
-        long total = this.momentUserMapper.count(momentUser);
-        return new PageImpl<>(this.momentUserMapper.queryAllByLimit(momentUser, pageRequest), pageRequest, total);
+    public PageInfo<MomentUserInfoVo> recommend(MomentUser momentUser, Integer page,Integer size) {
+        String userId = saTokenConfig.getUser().getUserId();
+        momentUser.setUserId(userId);
+        PageHelper.startPage(page, size);
+        List<MomentUserInfoVo> items = momentUserMapper.recommend(momentUser);
+        PageInfo<MomentUserInfoVo> pageInfo = new PageInfo<>(items);
+        items.forEach(item -> item.setFollowStatus(momentFollowMapper.count(MomentFollow.builder().followersId(userId).followedId(item.getUserId()).status(0).build())));
+        pageInfo.setList(items);
+        return pageInfo;
     }
 
     /**
-     * 新增数据
-     *
-     * @param momentUser 实例对象
-     * @return 实例对象
-     */
+     * @description: 新增数据
+     * @date: 2021/12/23 18:55
+     * @codes: 扁鹊
+     **/
     @Override
     public MomentUser insert(MomentUser momentUser) {
-        this.momentUserMapper.insert(momentUser);
+        momentUserMapper.insert(momentUser);
         return momentUser;
     }
 
@@ -76,7 +89,7 @@ public class MomentUserServiceImpl implements MomentUserService {
      * @return 是否成功
      */
     @Override
-    public boolean deleteById(Integer userId) {
+    public boolean deleteById(String userId) {
         return this.momentUserMapper.deleteById(userId) > 0;
     }
 }

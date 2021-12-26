@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.bluer.moment.mapper.MomentLikesMapper">
+
+    <resultMap type="top.bluer.moment.entity.MomentLikes" id="MomentLikesMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="dynamicId" column="dynamic_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="time" column="time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MomentLikesMap">
+        select id,
+               dynamic_id,
+               user_id,
+               time,
+               status
+        from moment_likes
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="list" resultMap="MomentLikesMap">
+        select
+        id, dynamic_id, user_id, time, status
+        from moment_likes
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="dynamicId != null">
+                and dynamic_id = #{dynamicId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Integer">
+        select count(1)
+        from moment_likes
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="dynamicId != null">
+                and dynamic_id = #{dynamicId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+    <select id="getInfo" resultMap="MomentLikesMap">
+        select *
+        from moment_likes
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="dynamicId != null and dynamicId != ''">
+                and dynamic_id = #{dynamicId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_likes(id, dynamic_id, user_id, time, status)
+        values (#{id}, #{dynamicId}, #{userId}, #{time}, #{status})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_likes(dynamic_id, user_id, time, status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.dynamicId}, #{entity.userId}, #{entity.time}, #{entity.status})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into moment_likes(dynamic_id, user_id, time, status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.dynamicId}, #{entity.userId}, #{entity.time}, #{entity.status})
+        </foreach>
+        on duplicate key update
+        dynamic_id = values(dynamic_id),
+        user_id = values(user_id),
+        time = values(time),
+        status = values(status)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update moment_likes
+        <set>
+            <if test="dynamicId != null">
+                dynamic_id = #{dynamicId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--删除数据-->
+    <delete id="deleteById">
+        update moment_likes
+        set status = 1
+        where id = #{id}
+    </delete>
+
+</mapper>
+

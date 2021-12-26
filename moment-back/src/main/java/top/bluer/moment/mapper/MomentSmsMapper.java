@@ -22,7 +22,7 @@ public interface MomentSmsMapper {
      * @param aliId 主键
      * @return 实例对象
      */
-    MomentSms queryById(Integer aliId);
+    MomentSms queryById(String aliId);
 
     /**
      * @description: 通过describes查询单条数据
@@ -87,7 +87,7 @@ public interface MomentSmsMapper {
      * @param aliId 主键
      * @return 影响行数
      */
-    int deleteById(Integer aliId);
+    int deleteById(String aliId);
 
 }
 

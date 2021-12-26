@@ -3,13 +3,13 @@
 <mapper namespace="top.bluer.moment.mapper.MomentAccountMapper">
 
     <resultMap type="top.bluer.moment.entity.MomentAccount" id="MomentAccountMap">
-        <result property="accountId" column="account_id" jdbcType="INTEGER"/>
+        <result property="accountId" column="account_id" jdbcType="VARCHAR"/>
         <result property="accountType" column="account_type" jdbcType="VARCHAR"/>
         <result property="accountPhone" column="account_phone" jdbcType="VARCHAR"/>
         <result property="accountMail" column="account_mail" jdbcType="VARCHAR"/>
         <result property="accountPassword" column="account_password" jdbcType="VARCHAR"/>
         <result property="accountStatus" column="account_status" jdbcType="VARCHAR"/>
-        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--通过用户条件查询单条数据-->
@@ -102,8 +102,10 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="accountId" useGeneratedKeys="true">
-        insert into moment_account(account_type, account_phone, account_mail, account_password, user_id, account_status)
-        values (#{accountType}, #{accountPhone}, #{accountMail}, #{accountPassword}, #{userId}, #{accountStatus})
+        insert into moment_account(account_id, account_type, account_phone, account_mail, account_password, user_id,
+                                   account_status)
+        values (#{accountId}, #{accountType}, #{accountPhone}, #{accountMail}, #{accountPassword}, #{userId},
+                #{accountStatus})
     </insert>
 
     <insert id="insertBatch" keyProperty="accountId" useGeneratedKeys="true">

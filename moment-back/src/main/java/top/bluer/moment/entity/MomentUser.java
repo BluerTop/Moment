@@ -20,7 +20,7 @@ public class MomentUser implements Serializable {
     /**
      * 用户id
      */
-    private Integer userId;
+    private String userId;
     /**
      * 用户昵称
      */

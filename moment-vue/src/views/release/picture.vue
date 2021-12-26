@@ -157,10 +157,9 @@ export default {
   },
   methods: {
     init() {
-      var _t = this;
-      var vanToast = Toast.loading({
+      const _t = this;
+      const vanToast = Toast.loading({
         duration: 1000,
-        overlay: true,
         forbidClick: true,
         message: '加载中...',
       });
@@ -175,15 +174,15 @@ export default {
 
     // 文件选择完毕后
     afterRead(file) {
-      var _t = this;
+      const _t = this;
       file.status = 'uploading';
       file.message = '上传中...';
-      var formData = new FormData();
+      const formData = new FormData();
       formData.append("file", file.file);
       // 上传图片
       uploadFile(formData, 'P').then(res => {
         if (res.success) {
-          var urls = res.data;
+          const urls = res.data;
           _t.form.pictureData.push(urls[0]);
           file.status = 'done';
           file.message = '上传成功';
@@ -226,7 +225,7 @@ export default {
 
     // 发布动态
     addDynamic() {
-      var _t = this;
+      const _t = this;
       if (_t.form.pictureData.length === 0) {
         Toast('您忘记上传图片了...');
         return false;
@@ -237,7 +236,7 @@ export default {
         Toast('您忘记选择标签了...');
         return false;
       }
-      var vanToast = Toast.loading({
+      const vanToast = Toast.loading({
         message: '加载中...',
         forbidClick: true,
       });
@@ -268,7 +267,7 @@ export default {
 
     // 标签保存
     focus() {
-      var _t = this;
+      const _t = this;
       if (_t.tags.length === 0) {
         Toast('您忘记选择标签了...');
         return false;
@@ -277,8 +276,8 @@ export default {
         Toast('您选择的标签太多了，装不下了...');
         return false;
       }
-      var tags = _t.tags;
-      var label = [];
+      const tags = _t.tags;
+      const label = [];
       for (let i in tags) {
         label.push('#' + tags[i].text)
       }
@@ -317,7 +316,7 @@ export default {
 
     // 获取设备宽度 - 图片宽度
     deviceWidth() {
-      var innerWidth = window.innerWidth;
+      const innerWidth = window.innerWidth;
       return (innerWidth - 44) / 3;
     },
   },

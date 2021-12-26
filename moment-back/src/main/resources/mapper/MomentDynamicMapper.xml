@@ -3,27 +3,29 @@
 <mapper namespace="top.bluer.moment.mapper.MomentDynamicMapper">
 
     <resultMap type="top.bluer.moment.entity.MomentDynamic" id="MomentDynamicMap">
-        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="VARCHAR"/>
         <result property="type" column="type" jdbcType="VARCHAR"/>
         <result property="textData" column="text_data" jdbcType="VARCHAR"/>
         <result property="pictureData" column="picture_data" jdbcType="VARCHAR"/>
         <result property="videoData" column="video_data" jdbcType="VARCHAR"/>
         <result property="label" column="label" jdbcType="VARCHAR"/>
         <result property="authority" column="authority" jdbcType="VARCHAR"/>
-        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
         <result property="creatTime" column="creat_time" jdbcType="TIMESTAMP"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <resultMap type="top.bluer.moment.entity.vo.MomentDynamicAndUserVo" extends="MomentDynamicMap" id="MomentDynamicAndUserMap">
+    <resultMap type="top.bluer.moment.entity.vo.MomentDynamicAndUserVo" extends="MomentDynamicMap"
+               id="MomentDynamicAndUserMap">
         <result property="userName" column="user_name" jdbcType="VARCHAR"/>
         <result property="userAvatar" column="user_avatar" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--根据id获取单条动态信息-->
     <select id="queryById" resultMap="MomentDynamicAndUserMap">
-        select md.*,mu.user_name,mu.user_avatar
-        from moment_dynamic md left join moment_user mu on md.user_id = mu.user_id and mu.user_status = 'E'
+        select md.*, mu.user_name, mu.user_avatar
+        from moment_dynamic md
+                 left join moment_user mu on md.user_id = mu.user_id and mu.user_status = 'E'
         where id = #{id}
     </select>
 
@@ -103,15 +105,36 @@
             </if>
         </where>
     </select>
-    <select id="queryB" resultMap="MomentDynamicMap">
-        select * from moment_dynamic where id > #{id}
+    <!--我的关注动态列表-->
+    <select id="queryByMyFocus" resultMap="MomentDynamicAndUserMap">
+        select md.*,mu.user_name,mu.user_avatar
+        from moment_dynamic md left join moment_user mu on md.user_id = mu.user_id and mu.user_status = 'E'
+        <where>
+            <if test="authority != null and authority.size() > 0">
+                and md.authority in
+                <foreach collection="authority" item="auth" open="(" separator="," close=")">
+                    #{auth}
+                </foreach>
+            </if>
+            <if test="ids != null and ids.size() > 0">
+                and md.user_id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="status != null and status != ''">
+                and md.status = #{status}
+            </if>
+        </where>
+        order by md.creat_time desc
     </select>
 
     <!--发布动态-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into moment_dynamic(type, text_data, picture_data, video_data, label, authority, user_id, creat_time,
+        insert into moment_dynamic(id, type, text_data, picture_data, video_data, label, authority, user_id, creat_time,
                                    status)
-        values (#{type}, #{textData}, #{pictureData}, #{videoData}, #{label}, #{authority}, #{userId}, #{creatTime},
+        values (#{id}, #{type}, #{textData}, #{pictureData}, #{videoData}, #{label}, #{authority}, #{userId},
+                #{creatTime},
                 #{status})
     </insert>
 
